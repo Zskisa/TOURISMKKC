@@ -91,7 +91,6 @@ public class LoginActivity extends AppCompatActivity {
                                 /*
                                 * ดึงรายละเอียดข้อมูลจาก facebook
                                 * */
-
                                 try {
                                     String strEmail = response.getJSONObject().get("email").toString();
                                     String strFirstName = response.getJSONObject().get("first_name").toString();

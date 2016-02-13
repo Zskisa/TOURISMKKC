@@ -23,13 +23,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,27 +49,16 @@ public class MainActivity extends AppCompatActivity
         // Initialize the SDK before executing any other operations,
         // especially, if you're using Facebook UI elements.
 
-        // Add code to print out the key hash
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.zskisa.tourismkkc",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ignored) {
-
-        }
-
         /*
         * เริ่มต้นด้วยการตรวจข้อมูลว่ามีการเข้าระบบหรือยัง?
         * หากไม่มีการเข้าระบบจะเรียกหน้า LoginActivity ขึ้นมาเพื่อให้ผู้ใช้เข้าระบบ
         */
-
         String p_NAME = "App_Config";
         sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
+
+        String fb_id = sp.getString("title_profile", "");
+        String fb_email = sp.getString("title_email", "");
+        String fb_name = sp.getString("title_name", "");
 
         boolean cLogin = sp.getBoolean("LOGIN", false);
 
@@ -78,6 +71,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /*
+        * สร้างเมนู slide ทางซ้าย
+        * */
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -86,6 +82,32 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View view = navigationView.inflateHeaderView(R.layout.nav_header_main);
+
+        CircleImageView nav_profile = (CircleImageView) view.findViewById(R.id.nav_profile);
+        TextView nav_name = (TextView) view.findViewById(R.id.nav_name);
+        TextView nav_email = (TextView) view.findViewById(R.id.nav_email);
+
+        /*
+        * สร้าง link ที่ดึง id facebook มาทำเป็นที่อยู่ภาพ
+        * */
+        String sUID = "https://graph.facebook.com/" + fb_id + "/picture?type=large";
+
+        /*
+        * ดึงรูปจาก facebook ของคนที่ login†
+        * */
+        Picasso.with(getApplicationContext())
+                .load(sUID)
+                .placeholder(R.drawable.ic_menu_camera)
+                .error(R.drawable.ic_menu_gallery)
+                .into(nav_profile);
+
+        /*
+        * ดึงชื่อและอีเมล์จากหน้า login
+        * */
+        nav_name.setText(fb_name);
+        nav_email.setText(fb_email);
 
         changePage(new FeedFragment());
     }
