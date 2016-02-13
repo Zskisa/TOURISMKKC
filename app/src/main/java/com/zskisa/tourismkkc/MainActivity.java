@@ -1,5 +1,9 @@
 package com.zskisa.tourismkkc;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,9 +22,28 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+
+    @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
+        * เริ่มต้นด้วยการตรวจข้อมูลว่ามีการเข้าระบบหรือยัง?
+        * หากไม่มีการเข้าระบบจะเรียกหน้า LoginActivity ขึ้นมาเพื่อให้ผู้ใช้เข้าระบบ
+        */
+
+        String p_NAME = "App_Config";
+        sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
+
+        boolean cLogin = sp.getBoolean("LOGIN", false);
+
+        if (!cLogin) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+
         setContentView(R.layout.activity_main);
 
         changePage(new FeedFragment());
@@ -70,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("CommitPrefEdits")
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -85,7 +109,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_edit) {
             changePage(new EditFragment());
         } else if (id == R.id.nav_logout) {
-
+            editor = sp.edit();
+            editor.putBoolean("LOGIN", false);
+            editor.commit();
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
