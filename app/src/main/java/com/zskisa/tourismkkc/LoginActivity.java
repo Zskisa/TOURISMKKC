@@ -48,6 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     @InjectView(R.id.btn_login)    Button _loginButton;
     @InjectView(R.id.link_signup)    TextView _signupLink;
 
+    private List<String> PERMISSIONS = Arrays.asList("public_profile", "email");
+    private CallbackManager callbackManager;
+
     private SharedPreferences.Editor editor;
 
     @SuppressLint("CommitPrefEdits")
@@ -68,6 +71,78 @@ public class LoginActivity extends AppCompatActivity {
         String p_NAME = "App_Config";
         SharedPreferences sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
         editor = sp.edit();
+
+        /*
+        * ส่วนการทำงานของ sdk facebook
+        * */
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+
+        callbackManager = CallbackManager.Factory.create();
+        loginButton.setReadPermissions(PERMISSIONS);
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+
+                                /*
+                                * ดึงรายละเอียดข้อมูลจาก facebook
+                                * */
+
+                                try {
+                                    String strEmail = response.getJSONObject().get("email").toString();
+                                    String strFirstName = response.getJSONObject().get("first_name").toString();
+                                    String strLastName = response.getJSONObject().get("last_name").toString();
+                                    String strID = response.getJSONObject().get("id").toString();
+
+                                    editor.putString("title_profile", strID);
+                                    editor.putString("title_email", strEmail);
+                                    editor.putString("title_name", strFirstName + " " + strLastName);
+                                    editor.commit();
+
+                                    /*
+                                    * เรียก method หากมีการเชื่อม sdk facebook สำเร็จ การทำงานตรงนี้เหมือน login ธรรมดา
+                                    * */
+                                    onLoginSuccess();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,first_name,last_name");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+        // Add code to print out the key hash
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.zskisa.tourismkkc",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ignored) {
+
+        }
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +207,26 @@ public class LoginActivity extends AppCompatActivity {
                 this.finish();
             }
         }
+        /*
+        * ส่วนการทำงานของ sdk facebook
+        * */
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
