@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
@@ -38,8 +39,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SharedPreferences sp;
-    SharedPreferences.Editor editor;
+    private String TAG = "TAG";
+    private SharedPreferences sp;
 
     @SuppressLint("CommitPrefEdits")
     @Override
@@ -62,14 +63,59 @@ public class MainActivity extends AppCompatActivity
 
         boolean cLogin = sp.getBoolean("LOGIN", false);
 
+        Log.i(TAG, "Main - cLogin : " + String.valueOf(cLogin));
+
         if (!cLogin) {
+            finish();
+            Log.i(TAG, "Main - finish");
             startActivity(new Intent(this, LoginActivity.class));
+            Log.i(TAG, "Main - Intent");
         }
 
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /*
+        * ดึงข้อมูลมาเตรียมไว้แสดงผล
+        * */
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        View view = navigationView.inflateHeaderView(R.layout.nav_header_main);
+
+        CircleImageView nav_profile = (CircleImageView) view.findViewById(R.id.nav_profile);
+        TextView nav_name = (TextView) view.findViewById(R.id.nav_name);
+        TextView nav_email = (TextView) view.findViewById(R.id.nav_email);
+
+        Log.i(TAG, "Main - id : " + fb_id);
+        Log.i(TAG, "Main - email : " + fb_email);
+        Log.i(TAG, "Main - name : " + fb_name);
+
+        /*
+        * สร้าง link ที่ดึง id facebook มาทำเป็นที่อยู่ภาพ
+        * */
+        String sUID = "https://graph.facebook.com/" + fb_id + "/picture?type=large";
+
+        Log.i(TAG, "Main - sUID : " + sUID);
+
+        /*
+        * ดึงรูปจาก facebook ของคนที่ login†
+        * */
+        Picasso.with(getApplicationContext())
+                .load(sUID)
+                .placeholder(R.drawable.ic_menu_camera)
+                .error(R.drawable.ic_menu_gallery)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(nav_profile);
+
+        /*
+        * ดึงชื่อและอีเมล์จากหน้า login มาแสดงผลในเมนูทางซ้าย
+        * */
+        nav_name.setText(fb_name);
+        nav_email.setText(fb_email);
+
+        navigationView.setNavigationItemSelectedListener(this);
 
         /*
         * สร้างเมนู slide ทางซ้าย
@@ -79,35 +125,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        View view = navigationView.inflateHeaderView(R.layout.nav_header_main);
-
-        CircleImageView nav_profile = (CircleImageView) view.findViewById(R.id.nav_profile);
-        TextView nav_name = (TextView) view.findViewById(R.id.nav_name);
-        TextView nav_email = (TextView) view.findViewById(R.id.nav_email);
-
-        /*
-        * สร้าง link ที่ดึง id facebook มาทำเป็นที่อยู่ภาพ
-        * */
-        String sUID = "https://graph.facebook.com/" + fb_id + "/picture?type=large";
-
-        /*
-        * ดึงรูปจาก facebook ของคนที่ login†
-        * */
-        Picasso.with(getApplicationContext())
-                .load(sUID)
-                .placeholder(R.drawable.ic_menu_camera)
-                .error(R.drawable.ic_menu_gallery)
-                .into(nav_profile);
-
-        /*
-        * ดึงชื่อและอีเมล์จากหน้า login
-        * */
-        nav_name.setText(fb_name);
-        nav_email.setText(fb_email);
 
         changePage(new FeedFragment());
     }
@@ -171,10 +188,19 @@ public class MainActivity extends AppCompatActivity
             /*
             * ออกจากระบบแล้วไปยังหน้า login
             * */
-            editor = sp.edit();
-            editor.putBoolean("LOGIN", false);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.clear();
             editor.commit();
+            Log.i(TAG, "Main - logout : " + editor.commit());
             LoginManager.getInstance().logOut();
+            /*
+            * refresh activity เพื่อเคลียร์ข้อมูลก่อน login ใหม่
+            * */
+            finish();
+            startActivity(getIntent());
+            /*
+            * เสร็จขบวนการทั้งหมดแล้วเปลี่ยนไปยังหน้า login
+            * */
             startActivity(new Intent(this, LoginActivity.class));
         }
 

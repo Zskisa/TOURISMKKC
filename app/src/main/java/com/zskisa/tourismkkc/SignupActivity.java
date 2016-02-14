@@ -2,6 +2,7 @@ package com.zskisa.tourismkkc;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,14 +17,21 @@ import butterknife.InjectView;
 
 public class SignupActivity extends AppCompatActivity {
 
+    private String TAG = "TAG";
     private String p_Login = "LOGIN";
     private SharedPreferences.Editor editor;
+    private String name, email;
 
-    @InjectView(R.id.input_name)    EditText _nameText;
-    @InjectView(R.id.input_email)    EditText _emailText;
-    @InjectView(R.id.input_password)    EditText _passwordText;
-    @InjectView(R.id.btn_signup)    Button _signupButton;
-    @InjectView(R.id.link_login)    TextView _loginLink;
+    @InjectView(R.id.input_name)
+    EditText _nameText;
+    @InjectView(R.id.input_email)
+    EditText _emailText;
+    @InjectView(R.id.input_password)
+    EditText _passwordText;
+    @InjectView(R.id.btn_signup)
+    Button _signupButton;
+    @InjectView(R.id.link_login)
+    TextView _loginLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,8 +77,8 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
+        name = _nameText.getText().toString();
+        email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
@@ -92,8 +100,15 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         editor.putBoolean(p_Login, true);
+
+        /*
+        * เก็บข้อมูล name, email เพื่อไว้แสดงผลบนเมนูทางซ้าย
+        * */
+        editor.putString("title_name", name);
+        editor.putString("title_email", email);
         editor.commit();
         finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     public void onSignupFailed() {
