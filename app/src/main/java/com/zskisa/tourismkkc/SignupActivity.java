@@ -17,21 +17,15 @@ import butterknife.InjectView;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private String TAG = "TAG";
     private String p_Login = "LOGIN";
     private SharedPreferences.Editor editor;
     private String name, email;
 
-    @InjectView(R.id.input_name)
-    EditText _nameText;
-    @InjectView(R.id.input_email)
-    EditText _emailText;
-    @InjectView(R.id.input_password)
-    EditText _passwordText;
-    @InjectView(R.id.btn_signup)
-    Button _signupButton;
-    @InjectView(R.id.link_login)
-    TextView _loginLink;
+    @InjectView(R.id.input_name)    EditText _nameText;
+    @InjectView(R.id.input_email)    EditText _emailText;
+    @InjectView(R.id.input_password)    EditText _passwordText;
+    @InjectView(R.id.btn_signup)    Button _signupButton;
+    @InjectView(R.id.link_login)    TextView _loginLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,7 +107,6 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         _signupButton.setEnabled(true);
         editor.putBoolean(p_Login, false);
         editor.commit();

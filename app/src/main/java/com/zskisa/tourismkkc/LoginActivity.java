@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     @InjectView(R.id.btn_login)    Button _loginButton;
     @InjectView(R.id.link_signup)    TextView _signupLink;
 
-    private String TAG = "TAG";
     private static final int REQUEST_SIGNUP = 0;
     private List<String> PERMISSIONS = Arrays.asList("public_profile", "email");
     private CallbackManager callbackManager;
@@ -86,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.i(TAG, "login - facebook");
+
                                 /*
                                 * ดึงรายละเอียดข้อมูลจาก facebook
                                 * */
@@ -100,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
                                     editor.putString("title_email", strEmail);
                                     editor.putString("title_name", strFirstName + " " + strLastName);
                                     editor.commit();
-                                    Log.i(TAG, "login - fb-commit : " + String.valueOf(editor.commit()));
 
                                     /*
                                     * เรียก method หากมีการเชื่อม sdk facebook สำเร็จ การทำงานตรงนี้เหมือน login ธรรมดา
@@ -188,8 +186,6 @@ public class LoginActivity extends AppCompatActivity {
 
         editor.putString("title_email", email);
         editor.commit();
-        Log.i(TAG, "login - login normal : " + String.valueOf(editor.putString("title_email", email)));
-        Log.i(TAG, "login - login normal : " + String.valueOf(editor.commit()));
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -204,6 +200,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         /*
         * ส่วนการทำงานของการ login แบบธรรมดา เป็นการเรียกหลังทำการสมัครเท่านั้น
         * */
@@ -215,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                 this.finish();
             }
         }
+
         /*
         * ส่วนการทำงานของ sdk facebook
         * */
@@ -247,18 +245,15 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
         editor.putBoolean("LOGIN", true);
         editor.commit();
-        Log.i(TAG, "login - onLogin :" + String.valueOf(editor.commit()));
         finish();
         startActivity(new Intent(this, MainActivity.class));
     }
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         _loginButton.setEnabled(true);
         editor.putBoolean("LOGIN", false);
         editor.commit();
-        Log.i(TAG, "login - onLogin :" + String.valueOf(editor.commit()));
     }
 
     /*

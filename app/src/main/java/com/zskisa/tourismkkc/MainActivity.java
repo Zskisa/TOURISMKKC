@@ -1,18 +1,13 @@
 package com.zskisa.tourismkkc;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -31,15 +25,11 @@ import com.facebook.login.LoginManager;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String TAG = "TAG";
     private SharedPreferences sp;
 
     @SuppressLint("CommitPrefEdits")
@@ -63,13 +53,9 @@ public class MainActivity extends AppCompatActivity
 
         boolean cLogin = sp.getBoolean("LOGIN", false);
 
-        Log.i(TAG, "Main - cLogin : " + String.valueOf(cLogin));
-
         if (!cLogin) {
             finish();
-            Log.i(TAG, "Main - finish");
             startActivity(new Intent(this, LoginActivity.class));
-            Log.i(TAG, "Main - Intent");
         }
 
         setContentView(R.layout.activity_main);
@@ -88,16 +74,10 @@ public class MainActivity extends AppCompatActivity
         TextView nav_name = (TextView) view.findViewById(R.id.nav_name);
         TextView nav_email = (TextView) view.findViewById(R.id.nav_email);
 
-        Log.i(TAG, "Main - id : " + fb_id);
-        Log.i(TAG, "Main - email : " + fb_email);
-        Log.i(TAG, "Main - name : " + fb_name);
-
         /*
         * สร้าง link ที่ดึง id facebook มาทำเป็นที่อยู่ภาพ
         * */
         String sUID = "https://graph.facebook.com/" + fb_id + "/picture?type=large";
-
-        Log.i(TAG, "Main - sUID : " + sUID);
 
         /*
         * ดึงรูปจาก facebook ของคนที่ login†
@@ -140,10 +120,24 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            /*
+            * popup เตือนว่าต้องการออกจากแอปจริงหรือไม่
+            * */
+            new AlertDialog.Builder(this)
+                    .setTitle("Really Exit?")
+                    .setMessage("Are you sure you want to exit?")
+                    .setNegativeButton("NO", null)
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            MainActivity.super.onBackPressed();
+                        }
+                    }).create().show();
         }
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -165,6 +159,7 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     @SuppressLint("CommitPrefEdits")
     @SuppressWarnings("StatementWithEmptyBody")
@@ -184,20 +179,24 @@ public class MainActivity extends AppCompatActivity
             changePage(new MapFragment());
         } else if (id == R.id.nav_edit) {
             changePage(new EditFragment());
+        } else if (id == R.id.nav_about) {
+            changePage(new AboutFragment());
         } else if (id == R.id.nav_logout) {
+
             /*
             * ออกจากระบบแล้วไปยังหน้า login
             * */
             SharedPreferences.Editor editor = sp.edit();
             editor.clear();
             editor.commit();
-            Log.i(TAG, "Main - logout : " + editor.commit());
             LoginManager.getInstance().logOut();
+
             /*
             * refresh activity เพื่อเคลียร์ข้อมูลก่อน login ใหม่
             * */
             finish();
             startActivity(getIntent());
+
             /*
             * เสร็จขบวนการทั้งหมดแล้วเปลี่ยนไปยังหน้า login
             * */
