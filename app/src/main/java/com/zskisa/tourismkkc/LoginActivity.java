@@ -41,12 +41,13 @@ import butterknife.InjectView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final int REQUEST_SIGNUP = 0;
+
     @InjectView(R.id.input_email)    EditText _emailText;
     @InjectView(R.id.input_password)    EditText _passwordText;
     @InjectView(R.id.btn_login)    Button _loginButton;
     @InjectView(R.id.link_signup)    TextView _signupLink;
 
-    private static final int REQUEST_SIGNUP = 0;
     private List<String> PERMISSIONS = Arrays.asList("public_profile", "email");
     private CallbackManager callbackManager;
     private SharedPreferences.Editor editor;
@@ -66,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
         /*
         * ตั้งค่าการตรวจสอบการเข้าระบบ
         * */
-        String p_NAME = "App_Config";
-        SharedPreferences sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
+        String PREF_APP = "PREF_APP";
+        SharedPreferences sp = getSharedPreferences(PREF_APP, MODE_PRIVATE);
         editor = sp.edit();
 
         /*
@@ -158,44 +159,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void login() {
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        if (!validate()) {
-            onLoginFailed();
-            return;
-        }
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
 
-        _loginButton.setEnabled(false);
-        /*
-        * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
-        * */
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
-        // TODO: Implement your own authentication logic here.
-
-        /*
-        * เก็บข้อมูล email ที่ login แบบธรรมดาเอาไว้แสดงบนเมนูทางซ้าย
-        * */
-
-        editor.putString("title_email", email);
-        editor.commit();
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override
@@ -220,25 +197,49 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
-
-    @Override
     public void onBackPressed() {
         // disable going back to the MainActivity
         moveTaskToBack(true);
+    }
+
+    public void login() {
+
+        if (!validate()) {
+            onLoginFailed();
+            return;
+        }
+
+        _loginButton.setEnabled(false);
+
+        /*
+        * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
+        * */
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
+
+        // TODO: Implement your own authentication logic here.
+
+        /*
+        * เก็บข้อมูล email ที่ login แบบธรรมดาเอาไว้แสดงบนเมนูทางซ้าย
+        * */
+        editor.putString("title_email", email);
+        editor.commit();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onLoginSuccess or onLoginFailed
+                        onLoginSuccess();
+                        // onLoginFailed();
+                        progressDialog.dismiss();
+                    }
+                }, 3000);
     }
 
     public void onLoginSuccess() {
@@ -281,6 +282,4 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
-
 }
-

@@ -10,4 +10,18 @@
     <string name="title_activity_signup">Signup</string>
 
     <string name="facebook_app_id">918142991587114</string>
+
+    <!-- nav -->
+    <string name="feed">Feed</string>
+    <string name="search">Search</string>
+    <string name="map">Map</string>
+    <string name="edit">Edit</string>
+    <string name="about">About</string>
+    <string name="logout">Logout</string>
+
+    <!-- alertdialog -->
+    <string name="ad_title">Really Exit?</string>
+    <string name="ad_message">Are you sure you want to exit?</string>
+    <string name="ad_negativeButton">No</string>
+    <string name="ad_positiveButton">Yes</string>
 </resources>

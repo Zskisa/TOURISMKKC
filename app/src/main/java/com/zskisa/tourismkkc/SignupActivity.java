@@ -33,8 +33,8 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         ButterKnife.inject(this);
 
-        String p_NAME = "App_Config";
-        SharedPreferences sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
+        String PREF_APP = "PREF_APP";
+        SharedPreferences sp = getSharedPreferences(PREF_APP, MODE_PRIVATE);
         editor = sp.edit();
 
         _signupButton.setOnClickListener(new View.OnClickListener() {

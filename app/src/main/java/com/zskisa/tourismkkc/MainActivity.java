@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,8 +43,8 @@ public class MainActivity extends AppCompatActivity
         * เริ่มต้นด้วยการตรวจข้อมูลว่ามีการเข้าระบบหรือยัง?
         * หากไม่มีการเข้าระบบจะเรียกหน้า LoginActivity ขึ้นมาเพื่อให้ผู้ใช้เข้าระบบ
         */
-        String p_NAME = "App_Config";
-        sp = getSharedPreferences(p_NAME, MODE_PRIVATE);
+        String PREF_APP = "PREF_APP";
+        sp = getSharedPreferences(PREF_APP, MODE_PRIVATE);
 
         String fb_id = sp.getString("title_profile", "");
         String fb_email = sp.getString("title_email", "");
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         * */
         Picasso.with(getApplicationContext())
                 .load(sUID)
-                .placeholder(R.drawable.ic_menu_camera)
+                .placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
                 .error(R.drawable.ic_menu_gallery)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .into(nav_profile);
@@ -109,6 +108,22 @@ public class MainActivity extends AppCompatActivity
         changePage(new FeedFragment());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
+    }
+
     /*
     * ตรวจสอบว่าปุ่มกลับของ android ถูกกดตอนไหน
     * หากมีการเรียกใช้งานเมนูทางซ้ายจะกดปิดไปก่อน
@@ -125,10 +140,10 @@ public class MainActivity extends AppCompatActivity
             * popup เตือนว่าต้องการออกจากแอปจริงหรือไม่
             * */
             new AlertDialog.Builder(this)
-                    .setTitle("Really Exit?")
-                    .setMessage("Are you sure you want to exit?")
-                    .setNegativeButton("NO", null)
-                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.ad_title)
+                    .setMessage(R.string.ad_message)
+                    .setNegativeButton(R.string.ad_negativeButton, null)
+                    .setPositiveButton(R.string.ad_positiveButton, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             MainActivity.super.onBackPressed();
@@ -136,30 +151,6 @@ public class MainActivity extends AppCompatActivity
                     }).create().show();
         }
     }
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    */
 
     @SuppressLint("CommitPrefEdits")
     @SuppressWarnings("StatementWithEmptyBody")
@@ -171,17 +162,17 @@ public class MainActivity extends AppCompatActivity
         /*
         * รายชื่อเมนูทางด้านซ้าย
         * */
-        if (id == R.id.nav_home) {
+        if (id == R.id.menu_home) {
             changePage(new FeedFragment());
-        } else if (id == R.id.nav_search) {
+        } else if (id == R.id.menu_search) {
             changePage(new SearchFragment());
-        } else if (id == R.id.nav_map) {
+        } else if (id == R.id.menu_map) {
             changePage(new MapFragment());
-        } else if (id == R.id.nav_edit) {
+        } else if (id == R.id.menu_edit) {
             changePage(new EditFragment());
-        } else if (id == R.id.nav_about) {
+        } else if (id == R.id.menu_about) {
             changePage(new AboutFragment());
-        } else if (id == R.id.nav_logout) {
+        } else if (id == R.id.menu_logout) {
 
             /*
             * ออกจากระบบแล้วไปยังหน้า login
@@ -215,21 +206,5 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_content, fragment);
         transaction.commit();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
     }
 }

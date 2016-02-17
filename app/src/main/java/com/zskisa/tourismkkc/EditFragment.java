@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 public class EditFragment extends Fragment {
 
-    View view;
+    private View view;
 
     @Nullable
     @Override
