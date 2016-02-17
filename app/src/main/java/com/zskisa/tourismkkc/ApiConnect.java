@@ -34,9 +34,9 @@ public class ApiConnect {
         RequestBody formBody = new FormBody.Builder()
                 .add("user_email", dataRegister.getUserEmail())
                 .add("user_password", dataRegister.getUserPassword())
+                .add("user_fb_id", dataRegister.getUser_fb_id())
                 .add("user_fname", dataRegister.getUserFirstName())
                 .add("user_lname", dataRegister.getUserLastName())
-                .add("user_fb_id", dataRegister.getUser_fb_id())
                 .build();
 
         Request.Builder builder = new Request.Builder();
@@ -64,6 +64,9 @@ public class ApiConnect {
         RequestBody formBody = new FormBody.Builder()
                 .add("user_email", dataLogin.getUserEmail())
                 .add("user_password", dataLogin.getUserPassword())
+                .add("user_fb_id", dataLogin.getFbID())
+                .add("user_fname", dataLogin.getUserFname())
+                .add("user_lname", dataLogin.getUserLname())
                 .build();
 
         Request.Builder builder = new Request.Builder();

@@ -29,6 +29,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    /*
+    * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
+     */
+    public static ApiConnect api = new ApiConnect();
+
     private SharedPreferences sp;
 
     @SuppressLint("CommitPrefEdits")

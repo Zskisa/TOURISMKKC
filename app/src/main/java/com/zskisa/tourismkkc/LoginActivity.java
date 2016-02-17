@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -27,6 +29,8 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.zskisa.tourismkkc.apimodel.ApiLogin;
+import com.zskisa.tourismkkc.apimodel.ApiStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,10 +47,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int REQUEST_SIGNUP = 0;
 
-    @InjectView(R.id.input_email)    EditText _emailText;
-    @InjectView(R.id.input_password)    EditText _passwordText;
-    @InjectView(R.id.btn_login)    Button _loginButton;
-    @InjectView(R.id.link_signup)    TextView _signupLink;
+    @InjectView(R.id.input_email)
+    EditText _emailText;
+    @InjectView(R.id.input_password)
+    EditText _passwordText;
+    @InjectView(R.id.btn_login)
+    Button _loginButton;
+    @InjectView(R.id.link_signup)
+    TextView _signupLink;
 
     private List<String> PERMISSIONS = Arrays.asList("public_profile", "email");
     private CallbackManager callbackManager;
@@ -100,6 +108,14 @@ public class LoginActivity extends AppCompatActivity {
                                     editor.putString("title_email", strEmail);
                                     editor.putString("title_name", strFirstName + " " + strLastName);
                                     editor.commit();
+
+                                    ApiLogin login = new ApiLogin(strEmail);
+                                    login.setFbID(strID);
+                                    login.setUserFname(strFirstName);
+                                    login.setUserLname(strLastName);
+
+                                    LoginActivity.Connect connect = new Connect();
+                                    connect.execute(login);
 
                                     /*
                                     * เรียก method หากมีการเชื่อม sdk facebook สำเร็จ การทำงานตรงนี้เหมือน login ธรรมดา
@@ -211,19 +227,9 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        /*
-        * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
-        * */
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
 
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
-
-        // TODO: Implement your own authentication logic here.
 
         /*
         * เก็บข้อมูล email ที่ login แบบธรรมดาเอาไว้แสดงบนเมนูทางซ้าย
@@ -231,15 +237,10 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("title_email", email);
         editor.commit();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+        // TODO: Implement your own authentication logic here.
+        ApiLogin login = new ApiLogin(email, password);
+        Connect connect = new Connect();
+        connect.execute(login);
     }
 
     public void onLoginSuccess() {
@@ -281,5 +282,40 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    class Connect extends AsyncTask<ApiLogin, Void, ApiStatus> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
+            */
+            progressDialog = new ProgressDialog(LoginActivity.this,
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Authenticating...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatus doInBackground(ApiLogin... params) {
+            return MainActivity.api.login(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            progressDialog.dismiss();
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                onLoginSuccess();
+            } else {
+                _loginButton.setEnabled(true);
+                Toast.makeText(getApplicationContext(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

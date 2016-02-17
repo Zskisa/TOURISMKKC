@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zskisa.tourismkkc.apimodel.ApiLogin;
+import com.zskisa.tourismkkc.apimodel.ApiRegister;
+import com.zskisa.tourismkkc.apimodel.ApiStatus;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -19,13 +24,20 @@ public class SignupActivity extends AppCompatActivity {
 
     private String p_Login = "LOGIN";
     private SharedPreferences.Editor editor;
-    private String name, email;
+    private String fname, lname, password, email;
 
-    @InjectView(R.id.input_name)    EditText _nameText;
-    @InjectView(R.id.input_email)    EditText _emailText;
-    @InjectView(R.id.input_password)    EditText _passwordText;
-    @InjectView(R.id.btn_signup)    Button _signupButton;
-    @InjectView(R.id.link_login)    TextView _loginLink;
+    @InjectView(R.id.input_fname)
+    EditText _fnameText;
+    @InjectView(R.id.input_lname)
+    EditText _lnameText;
+    @InjectView(R.id.input_email)
+    EditText _emailText;
+    @InjectView(R.id.input_password)
+    EditText _passwordText;
+    @InjectView(R.id.btn_signup)
+    Button _signupButton;
+    @InjectView(R.id.link_login)
+    TextView _loginLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,17 +77,17 @@ public class SignupActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
 
-        name = _nameText.getText().toString();
+        fname = _fnameText.getText().toString();
+        lname = _lnameText.getText().toString();
+        password = _passwordText.getText().toString();
         email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
+
+        ApiRegister register = new ApiRegister(email, password, fname, lname);
+        SignupActivity.Connect connect = new Connect();
+        connect.execute(register);
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -84,7 +96,7 @@ public class SignupActivity extends AppCompatActivity {
                         // depending on success
                         onSignupSuccess();
                         // onSignupFailed();
-                        progressDialog.dismiss();
+
                     }
                 }, 3000);
     }
@@ -98,7 +110,7 @@ public class SignupActivity extends AppCompatActivity {
         /*
         * เก็บข้อมูล name, email เพื่อไว้แสดงผลบนเมนูทางซ้าย
         * */
-        editor.putString("title_name", name);
+        editor.putString("title_name", fname + " " + lname);
         editor.putString("title_email", email);
         editor.commit();
         finish();
@@ -115,15 +127,23 @@ public class SignupActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String name = _nameText.getText().toString();
+        String fname = _fnameText.getText().toString();
+        String lname = _lnameText.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
+        if (fname.isEmpty() || fname.length() < 3) {
+            _fnameText.setError("at least 3 characters");
             valid = false;
         } else {
-            _nameText.setError(null);
+            _fnameText.setError(null);
+        }
+
+        if (lname.isEmpty() || lname.length() < 3) {
+            _lnameText.setError("at least 3 characters");
+            valid = false;
+        } else {
+            _lnameText.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -141,5 +161,38 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    class Connect extends AsyncTask<ApiRegister, Void, ApiStatus> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(SignupActivity.this,
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Creating Account...");
+            progressDialog.show();
+        }
+
+        @Override
+        protected ApiStatus doInBackground(ApiRegister... params) {
+            return MainActivity.api.register(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            progressDialog.dismiss();
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Toast.makeText(getApplicationContext(), "สมัครสมาชิกสำเร็จ", Toast.LENGTH_LONG).show();
+                onSignupSuccess();
+            } else {
+                _signupButton.setEnabled(true);
+                Toast.makeText(getApplicationContext(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 }
