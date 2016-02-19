@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc.apimodel;
 
 public class ApiRegisterPlaces {
+
     private String user_email;
     private String user_password;
     private String location_lat;

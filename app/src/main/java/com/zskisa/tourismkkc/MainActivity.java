@@ -1,13 +1,16 @@
 package com.zskisa.tourismkkc;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,13 +24,19 @@ import android.widget.TextView;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     /*
     * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
@@ -172,7 +181,15 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_search) {
             changePage(new SearchFragment());
         } else if (id == R.id.menu_map) {
-            changePage(new MapFragment());
+
+            /*
+            * ไม่ต้องสร้างหน้าใหม่เพื่อรองรับหน้า maps
+            * */
+            MapFragment mapFragment = MapFragment.newInstance();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_content, mapFragment);
+            transaction.commit();
+            mapFragment.getMapAsync(this);
         } else if (id == R.id.menu_edit) {
             changePage(new EditFragment());
         } else if (id == R.id.menu_about) {
@@ -208,8 +225,32 @@ public class MainActivity extends AppCompatActivity
     * method เปลี่ยนหน้าของ slide ทางซ้าย
     * */
     private void changePage(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_content, fragment);
         transaction.commit();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        /*
+        * ตรวจสอบว่ามีการเปิดใช้งาน gps หรือยัง
+        * */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        googleMap.setMyLocationEnabled(true);
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(16.477551, 102.8209163))
+                .title("Complex KKU")
+                .snippet("ดินแดนสวยงาม สว่างมากจ้า")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 }

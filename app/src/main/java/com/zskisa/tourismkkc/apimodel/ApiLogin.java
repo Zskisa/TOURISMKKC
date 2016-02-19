@@ -1,10 +1,11 @@
 package com.zskisa.tourismkkc.apimodel;
 
 public class ApiLogin {
+
     private String userEmail = "";
     private String userPassword = "";
-    private String userFname="";
-    private String userLname="";
+    private String userFname = "";
+    private String userLname = "";
     private String fbID = "";
 
     public ApiLogin(String userEmail, String userPassword) {

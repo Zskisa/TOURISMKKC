@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc.apimodel;
 
 public class ApiRegister {
+
     private String userEmail = "";
     private String userPassword = "";
     private String userFirstName = "";

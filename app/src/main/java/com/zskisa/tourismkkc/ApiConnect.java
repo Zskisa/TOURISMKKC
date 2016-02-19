@@ -22,7 +22,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ApiConnect {
-    private String URL = "http://10.0.2.2/TourismKKC/API/";
+
+        private String URL = "http://www.tourism-kkc.com/api/";
     private String TAG = "DEBUG";
     private OkHttpClient okHttpClient = new OkHttpClient();
 

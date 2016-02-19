@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc.apimodel;
 
 public class ApiStatus {
+
     private String status;
     private String action;
     private String reason;
