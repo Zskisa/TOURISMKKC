@@ -1,20 +1,88 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.zskisa.tourismkkc.apimodel.ApiFeed;
+import com.zskisa.tourismkkc.apimodel.ApiLogin;
+import com.zskisa.tourismkkc.apimodel.FeedAdapter;
+
+import java.util.List;
 
 public class FeedFragment extends Fragment {
 
-    View view;
+    private View view;
+    private RecyclerView rv;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.content_main, container, false);
+
+        rv = (RecyclerView) view.findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+
+        ApiLogin login = new ApiLogin("test@test.com", "1234");
+        FeedFragment.Connect connect = new Connect();
+        connect.execute(login);
+
+
+        // find the layout
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                // TODO : request data here
+                ApiLogin login = new ApiLogin("test@test.com", "1234");
+                FeedFragment.Connect connect = new Connect();
+                connect.execute(login);
+            }
+        });
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary_dark, R.color.primary,
+                R.color.cardview_dark_background, R.color.cardview_light_background);
+
+
         return view;
+    }
+
+    class Connect extends AsyncTask<ApiLogin, Void, ApiFeed> {
+
+        @Override
+        protected ApiFeed doInBackground(ApiLogin... params) {
+            return MainActivity.api.feed(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiFeed apiFeed) {
+            super.onPostExecute(apiFeed);
+            if (apiFeed != null && apiFeed.getData().getResult() != null && apiFeed.getData().getResult().size() != 0) {
+                FeedAdapter adapter = new FeedAdapter(apiFeed.getData().getResult());
+                rv.setAdapter(adapter);
+            } else {
+                Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+
+            if(swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
     }
 }

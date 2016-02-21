@@ -238,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // TODO: Implement your own authentication logic here.
         ApiLogin login = new ApiLogin(email, password);
-        Connect connect = new Connect();
+        LoginActivity.Connect connect = new Connect();
         connect.execute(login);
     }
 

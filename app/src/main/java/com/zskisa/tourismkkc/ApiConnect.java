@@ -2,6 +2,9 @@ package com.zskisa.tourismkkc;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.zskisa.tourismkkc.apimodel.ApiFeed;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
 import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
@@ -23,7 +26,7 @@ import okhttp3.Response;
 
 public class ApiConnect {
 
-        private String URL = "http://www.tourism-kkc.com/api/";
+    private String URL = "http://www.tourism-kkc.com/api/";
     private String TAG = "DEBUG";
     private OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -125,6 +128,37 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiFeed feed(ApiLogin apiLogin) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("user_email", apiLogin.getUserEmail())
+                .add("user_password", apiLogin.getUserPassword())
+                .add("user_fb_id", apiLogin.getFbID())
+                .add("user_fname", apiLogin.getUserFname())
+                .add("user_lname", apiLogin.getUserLname())
+                .build();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "feed")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiFeed.class);
+            } else {
+                Log.d(TAG, "Not Success - code in feed : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in feed : " + e.getMessage());
             return null;
         }
     }
