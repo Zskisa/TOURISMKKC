@@ -94,15 +94,18 @@ public class ApiConnect {
         }
     }
 
-    private ApiStatus registerPlaces(ApiRegisterPlaces apiRegisterPlaces) {
+    public ApiStatus registerPlaces(ApiRegisterPlaces apiRegisterPlaces) {
         String path = apiRegisterPlaces.getFiles();
         String filename = path.substring(path.lastIndexOf("/"));
         String mime = apiRegisterPlaces.getMime();
 
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("user_email", apiRegisterPlaces.getUser_email())
-                .addFormDataPart("user_password", apiRegisterPlaces.getUser_password())
+                .addFormDataPart("user_email", apiRegisterPlaces.getApiLogin().getUserEmail())
+                .addFormDataPart("user_password", apiRegisterPlaces.getApiLogin().getUserPassword())
+                .addFormDataPart("user_fb_id", apiRegisterPlaces.getApiLogin().getFbID())
+                .addFormDataPart("user_fname", apiRegisterPlaces.getApiLogin().getUserFname())
+                .addFormDataPart("user_lname", apiRegisterPlaces.getApiLogin().getUserLname())
                 .addFormDataPart("location_lat", apiRegisterPlaces.getLocation_lat())
                 .addFormDataPart("location_lng", apiRegisterPlaces.getLocation_lng())
                 .addFormDataPart("places_name", apiRegisterPlaces.getPlaces_name())

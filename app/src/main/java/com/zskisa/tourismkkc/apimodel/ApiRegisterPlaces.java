@@ -2,8 +2,7 @@ package com.zskisa.tourismkkc.apimodel;
 
 public class ApiRegisterPlaces {
 
-    private String user_email;
-    private String user_password;
+    private ApiLogin apiLogin;
     private String location_lat;
     private String location_lng;
     private String places_name;
@@ -12,20 +11,12 @@ public class ApiRegisterPlaces {
     private String files;
     private String mime;
 
-    public String getUser_email() {
-        return user_email;
+    public ApiLogin getApiLogin() {
+        return apiLogin;
     }
 
-    public void setUser_email(String user_email) {
-        this.user_email = user_email;
-    }
-
-    public String getUser_password() {
-        return user_password;
-    }
-
-    public void setUser_password(String user_password) {
-        this.user_password = user_password;
+    public void setApiLogin(ApiLogin apiLogin) {
+        this.apiLogin = apiLogin;
     }
 
     public String getLocation_lat() {
@@ -83,5 +74,4 @@ public class ApiRegisterPlaces {
     public void setMime(String mime) {
         this.mime = mime;
     }
-
 }
