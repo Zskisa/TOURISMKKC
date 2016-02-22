@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity
             login = new ApiLogin(userEmail, userPassword);
         } else if (!userEmail.isEmpty() && !fbID.isEmpty()) {
             login = new ApiLogin(userEmail);
+            login.setFbID(fbID);
         }
         if (login != null) {
             login.setUserFname(userFname);
