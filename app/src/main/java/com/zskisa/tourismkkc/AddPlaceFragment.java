@@ -64,9 +64,8 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
                     try {
                         Toast.makeText(getActivity(), "Name: " + sName + "\nDetail: " + sDetail, Toast.LENGTH_LONG).show();
 
-                        ApiLogin login = new ApiLogin("test@test.com", "1234");
                         ApiRegisterPlaces registerPlaces = new ApiRegisterPlaces();
-                        registerPlaces.setApiLogin(login);
+                        registerPlaces.setApiLogin(MainActivity.login);
                         registerPlaces.setPlaces_name(sName);
                         registerPlaces.setPlaces_desc(sDetail);
                         registerPlaces.setType_detail_id("06");

@@ -110,6 +110,13 @@ public class SignupActivity extends AppCompatActivity {
         /*
         * เก็บข้อมูล name, email เพื่อไว้แสดงผลบนเมนูทางซ้าย
         * */
+        //ค่าที่ต้องใช้สำหรับสร้าง ApiLogin
+        editor.putString("userEmail", email);
+        editor.putString("userPassword", password);
+        editor.putString("userFname", fname);
+        editor.putString("userLname", lname);
+        editor.putString("fbID", "");
+
         editor.putString("title_name", fname + " " + lname);
         editor.putString("title_email", email);
         editor.commit();

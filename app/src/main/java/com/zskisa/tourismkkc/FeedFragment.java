@@ -37,9 +37,8 @@ public class FeedFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        ApiLogin login = new ApiLogin("test@test.com", "1234");
         FeedFragment.Connect connect = new Connect();
-        connect.execute(login);
+        connect.execute(MainActivity.login);
 
 
         // find the layout
@@ -50,9 +49,8 @@ public class FeedFragment extends Fragment {
             @Override
             public void onRefresh() {
                 // TODO : request data here
-                ApiLogin login = new ApiLogin("test@test.com", "1234");
                 FeedFragment.Connect connect = new Connect();
-                connect.execute(login);
+                connect.execute(MainActivity.login);
             }
         });
         // sets the colors used in the refresh animation
@@ -80,7 +78,7 @@ public class FeedFragment extends Fragment {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
             }
 
-            if(swipeRefreshLayout.isRefreshing()) {
+            if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         }

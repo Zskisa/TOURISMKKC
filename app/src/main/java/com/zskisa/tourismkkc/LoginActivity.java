@@ -103,6 +103,13 @@ public class LoginActivity extends AppCompatActivity {
                                     String strLastName = response.getJSONObject().get("last_name").toString();
                                     String strID = response.getJSONObject().get("id").toString();
 
+                                    //ค่าที่ต้องใช้สำหรับสร้าง ApiLogin
+                                    editor.putString("userEmail", strEmail);
+                                    editor.putString("userPassword", "");
+                                    editor.putString("userFname", strFirstName);
+                                    editor.putString("userLname", strLastName);
+                                    editor.putString("fbID", strID);
+
                                     editor.putString("title_profile", strID);
                                     editor.putString("title_email", strEmail);
                                     editor.putString("title_name", strFirstName + " " + strLastName);
@@ -233,6 +240,13 @@ public class LoginActivity extends AppCompatActivity {
         /*
         * เก็บข้อมูล email ที่ login แบบธรรมดาเอาไว้แสดงบนเมนูทางซ้าย
         * */
+        //ค่าที่ต้องใช้สำหรับสร้าง ApiLogin
+        editor.putString("userEmail", email);
+        editor.putString("userPassword", password);
+        editor.putString("userFname", "");
+        editor.putString("userLname", "");
+        editor.putString("fbID", "");
+
         editor.putString("title_email", email);
         editor.commit();
 

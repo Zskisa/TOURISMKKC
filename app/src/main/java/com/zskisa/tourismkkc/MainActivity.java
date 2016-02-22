@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
+import com.zskisa.tourismkkc.apimodel.ApiLogin;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
      */
     public static ApiConnect api = new ApiConnect();
+    public static ApiLogin login;
 
     private SharedPreferences sp;
 
@@ -128,7 +131,25 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        changePage(new FeedFragment());
+        //สร้าง ApiLogin ไว้ให้หน้าอื่นเรียกใช้
+        String userEmail = sp.getString("userEmail", "");
+        String userPassword = sp.getString("userPassword", "");
+        String userFname = sp.getString("userFname", "");
+        String userLname = sp.getString("userLname", "");
+        String fbID = sp.getString("fbID", "");
+        if (!userEmail.isEmpty() && !userPassword.isEmpty()) {
+            login = new ApiLogin(userEmail, userPassword);
+        } else if (!userEmail.isEmpty() && !fbID.isEmpty()) {
+            login = new ApiLogin(userEmail);
+        }
+        if (login != null) {
+            login.setUserFname(userFname);
+            login.setUserLname(userLname);
+
+            changePage(new FeedFragment());
+        } else {
+            Toast.makeText(getApplication(), "ผิดพลาด กรุณาเข้าระบบใหม่", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
