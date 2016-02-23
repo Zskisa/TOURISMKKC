@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.zskisa.tourismkkc.DetailDialog;
+import com.zskisa.tourismkkc.DetailFragment;
 import com.zskisa.tourismkkc.MainActivity;
 import com.zskisa.tourismkkc.R;
 
@@ -45,6 +46,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             @Override
             public void onClick(View v) {
                 Toast.makeText(v.getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+                FragmentTransaction transaction =  MainActivity.mFragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_content, new DetailFragment());
+                transaction.commit();
             }
         });
 

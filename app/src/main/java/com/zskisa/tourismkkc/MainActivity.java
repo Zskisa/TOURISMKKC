@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +48,11 @@ public class MainActivity extends AppCompatActivity
      */
     public static ApiConnect api = new ApiConnect();
     public static ApiLogin login;
+
+    /*
+    * สร้าง FragmentManager ไว้ให้หน้าอื่นใช้เมื่อการจากใช้งาน
+     */
+    public static FragmentManager mFragmentManager;
 
     private SharedPreferences sp;
 
@@ -148,6 +154,7 @@ public class MainActivity extends AppCompatActivity
             login.setUserFname(userFname);
             login.setUserLname(userLname);
 
+            mFragmentManager = getFragmentManager();
             changePage(new FeedFragment());
         } else {
             Toast.makeText(getApplication(), "ผิดพลาด กรุณาเข้าระบบใหม่", Toast.LENGTH_LONG).show();
