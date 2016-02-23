@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -91,6 +92,8 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
 
         // Spinner click listener
         spinner.setOnItemSelectedListener(this);
+
+        ArrayList<AddPlace> addPlaces = new ArrayList<>();
 
         // Spinner Drop down elements
         categories = new ArrayList<>();
@@ -224,6 +227,9 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
             progressDialog.dismiss();
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
                 Toast.makeText(getActivity(), "เพิ่มสำเร็จ", Toast.LENGTH_LONG).show();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_content, new FeedFragment());
+                transaction.commit();
             } else {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
             }

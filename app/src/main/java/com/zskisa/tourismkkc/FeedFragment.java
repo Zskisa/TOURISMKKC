@@ -40,7 +40,6 @@ public class FeedFragment extends Fragment {
         FeedFragment.Connect connect = new Connect();
         connect.execute(MainActivity.login);
 
-
         // find the layout
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         // the refresh listner. this would be called when the layout is pulled down
@@ -56,8 +55,6 @@ public class FeedFragment extends Fragment {
         // sets the colors used in the refresh animation
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_dark, R.color.primary,
                 R.color.cardview_dark_background, R.color.cardview_light_background);
-
-
         return view;
     }
 

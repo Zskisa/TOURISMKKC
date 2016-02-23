@@ -1,6 +1,11 @@
 package com.zskisa.tourismkkc.apimodel;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.zskisa.tourismkkc.DetailDialog;
+import com.zskisa.tourismkkc.MainActivity;
 import com.zskisa.tourismkkc.R;
 
 import java.util.List;
@@ -24,12 +32,25 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.feed_row, viewGroup, false);
-        FeedViewHolder pvh = new FeedViewHolder(v);
-        return pvh;
+        return new FeedViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(FeedViewHolder holder, int position) {
+    public void onBindViewHolder(final FeedViewHolder holder, final int position) {
+
+        /*
+        * เวลาคลิกที่รายการจะเด้งไปหน้ารายละเอียด
+        * */
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        /*
+        * ดึงรายละเอียดของ ชื่อ รายละเอียด และรูปมาแสดงผลเป็น listView
+        * */
         holder.placesName.setText(places.get(position).getPlaces_name());
         holder.typeName.setText(places.get(position).getType_detail_name());
         Context context = holder.placesPhoto.getContext();
@@ -44,6 +65,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     }
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
+
+
         CardView cv;
         TextView placesName;
         TextView typeName;

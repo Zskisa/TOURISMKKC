@@ -8,14 +8,13 @@ public class ApiFeed {
      * status : success
      * data : {"action":"rating_places","reason":"เข้าระบบสำเร็จ","result":[{"places_id":"000001","places_name":"กลางป่า","places_desc":"กลางป่า","avgstar":"0","type_detail_name":"สถานที่ท่องเที่ยวเชิงธรรมชาติ","location_address":"ซอย ดรุณสำราญ ตำบล ในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000 ประเทศไทย","location_lat":"16.42866500","location_lng":"102.82711730","photo_link":""},{"places_id":"000003","places_name":"กลางป่า3","places_desc":"","avgstar":"0","type_detail_name":"สถานที่ท่องเที่ยวเชิงธรรมชาติ","location_address":"ซอย ดรุณสำราญ ตำบล ในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000 ประเทศไทย","location_lat":"16.42866500","location_lng":"102.82711730","photo_link":"http://localhost/TourismKKC/api/photo000014"}]}
      */
-
     private String status;
+
     /**
      * action : rating_places
      * reason : เข้าระบบสำเร็จ
      * result : [{"places_id":"000001","places_name":"กลางป่า","places_desc":"กลางป่า","avgstar":"0","type_detail_name":"สถานที่ท่องเที่ยวเชิงธรรมชาติ","location_address":"ซอย ดรุณสำราญ ตำบล ในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000 ประเทศไทย","location_lat":"16.42866500","location_lng":"102.82711730","photo_link":""},{"places_id":"000003","places_name":"กลางป่า3","places_desc":"","avgstar":"0","type_detail_name":"สถานที่ท่องเที่ยวเชิงธรรมชาติ","location_address":"ซอย ดรุณสำราญ ตำบล ในเมือง อำเภอเมืองขอนแก่น ขอนแก่น 40000 ประเทศไทย","location_lat":"16.42866500","location_lng":"102.82711730","photo_link":"http://localhost/TourismKKC/api/photo000014"}]
      */
-
     private DataEntity data;
 
     public void setStatus(String status) {
@@ -35,8 +34,10 @@ public class ApiFeed {
     }
 
     public static class DataEntity {
+
         private String action;
         private String reason;
+
         /**
          * places_id : 000001
          * places_name : กลางป่า
@@ -48,7 +49,6 @@ public class ApiFeed {
          * location_lng : 102.82711730
          * photo_link :
          */
-
         private List<ResultEntity> result;
 
         public void setAction(String action) {
@@ -76,6 +76,7 @@ public class ApiFeed {
         }
 
         public static class ResultEntity {
+
             private String places_id;
             private String places_name;
             private String places_desc;

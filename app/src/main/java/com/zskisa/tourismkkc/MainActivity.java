@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -277,7 +278,11 @@ public class MainActivity extends AppCompatActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
+        LatLng thailand = new LatLng(12.8819714, 92.4392124);
+
         googleMap.setMyLocationEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(thailand));
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(16.477551, 102.8209163))
                 .title("Complex KKU")
