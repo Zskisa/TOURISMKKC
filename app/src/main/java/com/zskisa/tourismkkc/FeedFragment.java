@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -56,6 +57,25 @@ public class FeedFragment extends Fragment {
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_dark, R.color.primary,
                 R.color.cardview_dark_background, R.color.cardview_light_background);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //แสดงปุ่ม FloatingActionButton ทุกครั้งที่เข้าหน้านี้
+        if (!MainActivity.floatingActionButton.isShown()) {
+            MainActivity.floatingActionButton.show();
+        }
+        MainActivity.floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_content, new AddPlaceFragment());
+                transaction.commit();
+
+            }
+        });
     }
 
     class Connect extends AsyncTask<ApiLogin, Void, ApiFeed> {

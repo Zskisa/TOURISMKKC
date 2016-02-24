@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity
      */
     public static FragmentManager mFragmentManager;
 
+    /*
+    * สร้าง FloatingActionButton ไว้ให้หน้าอื่นใช้งาน
+    * เพื่อใช้ในกรณีต้องการซ่อน หรือ เปลี่ยนการทำงาน
+     */
+    public static FloatingActionButton floatingActionButton;
+
     private SharedPreferences sp;
 
     @SuppressLint("CommitPrefEdits")
@@ -87,8 +93,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton actionButton = (FloatingActionButton) findViewById(R.id.fab);
-        actionButton.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changePage(new AddPlaceFragment());
@@ -220,6 +226,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_search) {
             changePage(new SearchFragment());
         } else if (id == R.id.menu_map) {
+            //ซ่อน FloatingButton
+            if (floatingActionButton.isShown()) {
+                floatingActionButton.hide();
+            }
 
             /*
             * ไม่ต้องสร้างหน้าใหม่เพื่อรองรับหน้า maps

@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,6 +56,15 @@ public class DetailFragment extends Fragment {
             DetailFragment.Connect connect = new Connect();
             connect.execute(placesID);
         }
+
+        //แก้ไขปุ่ม FloatingActionButton ให้เป็นการทำงานเฉพาะหน้านั้น
+        MainActivity.floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DetailDialog dialog = new DetailDialog();
+                dialog.show(MainActivity.mFragmentManager, "TEST123");
+            }
+        });
     }
 
     class Connect extends AsyncTask<String, Void, ApiPlaces> {
