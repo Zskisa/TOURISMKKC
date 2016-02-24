@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -45,9 +46,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-                FragmentTransaction transaction =  MainActivity.mFragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_content, new DetailFragment());
+                //สร้าง Object ของ DetailFragment
+                DetailFragment detailFragment = new DetailFragment();
+
+                //สร้าง Bundle เพื่อเตรียมส่งค่า placesID ไปพร้อมกับการเปลี่ยนหน้า
+                Bundle bundle = new Bundle();
+                bundle.putString("placesID", places.get(position).getPlaces_id());
+                detailFragment.setArguments(bundle);
+
+                //เปลี่ยนหน้า
+                FragmentTransaction transaction = MainActivity.mFragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_content, detailFragment);
                 transaction.commit();
             }
         });

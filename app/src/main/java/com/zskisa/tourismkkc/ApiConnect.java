@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zskisa.tourismkkc.apimodel.ApiFeed;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
+import com.zskisa.tourismkkc.apimodel.ApiPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
 import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
@@ -155,6 +156,29 @@ public class ApiConnect {
             if (response.isSuccessful()) {
                 Gson gson = new GsonBuilder().create();
                 return gson.fromJson(response.body().string(), ApiFeed.class);
+            } else {
+                Log.d(TAG, "Not Success - code in feed : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in feed : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiPlaces places(String placesID) {
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "places/" + placesID)
+                .get()
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiPlaces.class);
             } else {
                 Log.d(TAG, "Not Success - code in feed : " + response.code());
                 return null;
