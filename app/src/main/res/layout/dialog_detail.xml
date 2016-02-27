@@ -16,12 +16,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ListView
-                android:id="@+id/list_image"
-                android:layout_width="wrap_content"
-                android:layout_height="120dp"
-                android:layout_marginTop="12dp" />
-
             <RatingBar
                 android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
@@ -53,12 +47,6 @@
                     android:text="Images" />
 
             </LinearLayout>
-
-            <ListView
-                android:id="@+id/list_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="120dp"
-                android:layout_marginTop="12dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"

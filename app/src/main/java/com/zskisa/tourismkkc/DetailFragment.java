@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +38,6 @@ public class DetailFragment extends Fragment {
         mDemoSlider = (SliderLayout) view.findViewById(R.id.slider);
         mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
 
-        Button btnReview = (Button) view.findViewById(R.id.button_review);
-        btnReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DetailDialog dialog = new DetailDialog();
-                dialog.show(MainActivity.mFragmentManager, "TEST123");
-            }
-        });
         return view;
     }
 
