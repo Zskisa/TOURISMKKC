@@ -1,6 +1,7 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -60,12 +61,30 @@ public class DetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DetailDialog dialog = new DetailDialog();
+                dialog.places_id = placesID;
                 dialog.show(MainActivity.mFragmentManager, "TEST123");
             }
         });
     }
 
     class Connect extends AsyncTask<String, Void, ApiPlaces> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+             /*
+            * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+
+            //ล้างค่า Slide เก่าออกกรณีโหลดใหม่
+            mDemoSlider.removeAllSliders();
+        }
 
         @Override
         protected ApiPlaces doInBackground(String... params) {
@@ -75,6 +94,7 @@ public class DetailFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiPlaces apiPlaces) {
             super.onPostExecute(apiPlaces);
+            progressDialog.dismiss();
             if (apiPlaces == null) {
                 Toast.makeText(getActivity(), "ผิดพลาดไม่พบสถานที่ดังกล่าว", Toast.LENGTH_LONG).show();
             } else {

@@ -9,6 +9,7 @@ import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
 import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
+import com.zskisa.tourismkkc.apimodel.ApiReview;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
 
 import org.json.JSONException;
@@ -53,7 +54,8 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                return checkAPIStatus(response.body().string());
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
                 Log.d(TAG, "Not Success - code in register : " + response.code());
                 return null;
@@ -83,7 +85,8 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                return checkAPIStatus(response.body().string());
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
                 Log.d(TAG, "Not Success - code in login : " + response.code());
                 return null;
@@ -124,7 +127,8 @@ public class ApiConnect {
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                return checkAPIStatus(response.body().string());
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
             } else {
                 Log.d(TAG, "Not Success - code in login : " + response.code());
                 return null;
@@ -132,6 +136,49 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in login : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiStatus reviewPlaces(ApiReview apiReview) {
+        MultipartBody.Builder formDataPart = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("user_email", apiReview.getApiLogin().getUserEmail())
+                .addFormDataPart("user_password", apiReview.getApiLogin().getUserPassword())
+                .addFormDataPart("user_fb_id", apiReview.getApiLogin().getFbID())
+                .addFormDataPart("user_fname", apiReview.getApiLogin().getUserFname())
+                .addFormDataPart("user_lname", apiReview.getApiLogin().getUserLname())
+                .addFormDataPart("places_id", apiReview.getPlaces_id())
+                .addFormDataPart("rate_value", apiReview.getRate_value())
+                .addFormDataPart("review_detail", apiReview.getReview_detail());
+
+        if (apiReview.getFiles() != "" && apiReview.getMime() != "") {
+            String path = apiReview.getFiles();
+            String filename = path.substring(path.lastIndexOf("/"));
+            String mime = apiReview.getMime();
+            formDataPart.addFormDataPart("files", filename, RequestBody.create(MediaType.parse(mime), new File(path)));
+        }
+
+        RequestBody formBody = formDataPart.build();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "review_places")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success - code in review_places : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in review_places : " + e.getMessage());
             return null;
         }
     }
@@ -188,30 +235,6 @@ public class ApiConnect {
             Log.d(TAG, "ERROR in feed : " + e.getMessage());
             return null;
         }
-    }
-
-    private ApiStatus checkAPIStatus(String json_string) {
-        ApiStatus apiStatus = new ApiStatus();
-        try {
-            JSONObject jStatus = new JSONObject(json_string);
-            String status = jStatus.getString("status");
-            apiStatus.setStatus(status);
-
-            JSONObject objData = jStatus.getJSONObject("data");
-            String action = objData.getString("action");
-            apiStatus.setAction(action);
-
-            String reason = objData.getString("reason");
-            apiStatus.setReason(reason);
-
-            Log.d(TAG, "STATUS:" + status);
-            Log.d(TAG, "ACTION:" + action);
-            Log.d(TAG, "REASON:" + reason);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d(TAG, "ERROR in checkAPIStatus : " + e.toString());
-        }
-        return apiStatus;
     }
 
 }

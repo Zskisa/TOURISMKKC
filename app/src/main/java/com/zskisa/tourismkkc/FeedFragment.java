@@ -2,6 +2,7 @@ package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -83,6 +84,19 @@ public class FeedFragment extends Fragment {
     }
 
     class Connect extends AsyncTask<ApiLogin, Void, ApiFeed> {
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            /*
+            * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
+            */
+            progressDialog = new ProgressDialog(getActivity(),
+                    R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+        }
 
         @Override
         protected ApiFeed doInBackground(ApiLogin... params) {
@@ -92,6 +106,7 @@ public class FeedFragment extends Fragment {
         @Override
         protected void onPostExecute(ApiFeed apiFeed) {
             super.onPostExecute(apiFeed);
+            progressDialog.dismiss();
             if (apiFeed != null && apiFeed.getData().getResult() != null && apiFeed.getData().getResult().size() != 0) {
                 FeedAdapter adapter = new FeedAdapter(apiFeed.getData().getResult());
                 rv.setAdapter(adapter);

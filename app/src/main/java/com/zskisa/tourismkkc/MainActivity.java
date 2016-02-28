@@ -10,7 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -27,6 +30,11 @@ import android.widget.Toast;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -41,7 +49,19 @@ import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
+    /*
+    * สร้าง GoogleApiClient ไว้เรียกใช้งาน GoogleService
+    * เช่น LocationServices เพื่อให้ได้ตำแหน่งที่อยู่ปัจจุบัน
+     */
+    GoogleApiClient googleApiClient;
+
+    /*
+    * สร้างตัวแปร Location ไว้ให้หน้าอื่นเรียกใช้งาน
+     */
+    public static Location location;
 
     /*
     * สร้างตัวเชื่อม ApiConnect เพื่อให้แต่ละหน้าเรียกใช้ได้สะดวก
@@ -143,6 +163,14 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        //เรียกใช้งาน GoogleApiClient
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        googleApiClient.connect();
 
         //สร้าง ApiLogin ไว้ให้หน้าอื่นเรียกใช้
         String userEmail = sp.getString("userEmail", "");
@@ -305,5 +333,70 @@ public class MainActivity extends AppCompatActivity
                 .title("Complex KKU")
                 .snippet("ดินแดนสวยงาม สว่างมากจ้า")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (googleApiClient != null && !googleApiClient.isConnected()) {
+            googleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationAvailability locationAvailability = LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
+        if (locationAvailability.isLocationAvailable()) {
+            /*
+            *  สร้าง request เพื่อร้องขอตำแหน่ง GPS โดยมีค่าที่กำหนดไว้ดังนี้
+            *   - อัพเดทตำแหน่งทุกๆ 5 วินาที ที่เปิดแอพอยู่
+            *   - ในกรณีที่อ่านค่าเร็วได้กำหนดไว้ที่ 2 วินาที(กรณีมีตำแหน่งเก่าอยู่แล้วและเป็นตำแหน่งเดียวกัน)
+             */
+            LocationRequest request = new LocationRequest()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(5000)
+                    .setFastestInterval(2000);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, request, this);
+        } else {
+            //กรณีอุปกรณืไม่ได้เปิด GPS ไว้จะบังคับให้ไปหน้าตั้งค่า เพื่อเปิดการใช้งาน GPS ก่อน
+            Toast.makeText(getApplicationContext(), "กรุณาเปิดการทำงาน ระบบระบุตำแหน่ง", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+        Toast.makeText(getApplicationContext(), "Latitude : " + location.getLatitude() + "\n"
+                + "Longitude : " + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 }

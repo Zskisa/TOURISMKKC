@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
 
@@ -42,14 +40,21 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
     private View view;
     private String path = "";
     private String mime = "";
-    private String gpsMapLat = "16.42866500";
-    private String gpsMapLong = "102.82711730";
-    List<String> categories;
+    private String gpsMapLat = "";
+    private String gpsMapLong = "";
+    private String TID = "";
+    List<String> typeId;
+    List<String> typeDetial;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_add_place, container, false);
+
+        //ซ่อน FloatingButton
+        if (MainActivity.floatingActionButton.isShown()) {
+            MainActivity.floatingActionButton.hide();
+        }
 
         // EditText element
         editTextName = (EditText) view.findViewById(R.id.edt_place_name);
@@ -65,11 +70,15 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
                     try {
                         Toast.makeText(getActivity(), "Name: " + sName + "\nDetail: " + sDetail, Toast.LENGTH_LONG).show();
 
+                        //ดึงค่าตำแหน่งจากหน้า MainActivity
+                        gpsMapLat = String.valueOf(MainActivity.location.getLatitude());
+                        gpsMapLong = String.valueOf(MainActivity.location.getLongitude());
+                        
                         ApiRegisterPlaces registerPlaces = new ApiRegisterPlaces();
                         registerPlaces.setApiLogin(MainActivity.login);
                         registerPlaces.setPlaces_name(sName);
                         registerPlaces.setPlaces_desc(sDetail);
-                        registerPlaces.setType_detail_id("06");
+                        registerPlaces.setType_detail_id(TID);
                         registerPlaces.setLocation_lat(gpsMapLat);
                         registerPlaces.setLocation_lng(gpsMapLong);
                         registerPlaces.setFiles(path);
@@ -93,37 +102,61 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
         // Spinner click listener
         spinner.setOnItemSelectedListener(this);
 
-        ArrayList<AddPlace> addPlaces = new ArrayList<>();
-
         // Spinner Drop down elements
-        categories = new ArrayList<>();
-        categories.add("สถานที่ท่องเที่ยวเชิงธรรมชาติ");
-        categories.add("สถานที่ท่องเที่ยวเชิงวัฒนธรรม");
-        categories.add("สถานที่ท่องเที่ยวเชิงประวัติศาสตร์");
-        categories.add("สถานที่ท่องเที่ยวเชิงเกษตร");
-        categories.add("สถานที่ท่องเที่ยวเชิงนันทนาการ");
-        categories.add("อาหารไทย");
-        categories.add("อาหารภาคอีสาน");
-        categories.add("อาหารภาคใต้");
-        categories.add("อาหารภาคเหนือ");
-        categories.add("อาหารซีฟู๊ด");
-        categories.add("อาหารฟาสฟู๊ด");
-        categories.add("อาหารต่างชาติ");
-        categories.add("ราคาต่ำกว่า 500 บาท");
-        categories.add("ราคา 501 – 1000 บาท");
-        categories.add("ราคา 1001 – 2000 บาท");
-        categories.add("ราคามากกว่า 2000 บาท");
-        categories.add("ห้างสรรพสินค้า");
-        categories.add("ซุปเปอร์เซ็นเตอร์");
-        categories.add("ซุปเปอร์มาร์เก็ต");
-        categories.add("ร้านสะดวกซื้อ");
-        categories.add("ร้านค้าปลีก");
-        categories.add("สถานบริการอาบ อบ นวด");
-        categories.add("สถานบันเทิงดิสโก้เธค ผับ บาร์");
-        categories.add("สถานบันเทิงร้านคาราโอเกะ");
+        typeId = new ArrayList<>();
+        typeDetial = new ArrayList<>();
+
+        typeId.add("01");
+        typeDetial.add("สถานที่ท่องเที่ยวเชิงธรรมชาติ");
+        typeId.add("02");
+        typeDetial.add("สถานที่ท่องเที่ยวเชิงวัฒนธรรม");
+        typeId.add("03");
+        typeDetial.add("สถานที่ท่องเที่ยวเชิงประวัติศาสตร์");
+        typeId.add("04");
+        typeDetial.add("สถานที่ท่องเที่ยวเชิงเกษตร");
+        typeId.add("05");
+        typeDetial.add("สถานที่ท่องเที่ยวเชิงนันทนาการ");
+        typeId.add("06");
+        typeDetial.add("อาหารไทย");
+        typeId.add("07");
+        typeDetial.add("อาหารภาคอีสาน");
+        typeId.add("08");
+        typeDetial.add("อาหารภาคใต้");
+        typeId.add("09");
+        typeDetial.add("อาหารภาคเหนือ");
+        typeId.add("10");
+        typeDetial.add("อาหารซีฟู๊ด");
+        typeId.add("11");
+        typeDetial.add("อาหารฟาสฟู๊ด");
+        typeId.add("12");
+        typeDetial.add("อาหารต่างชาติ");
+        typeId.add("13");
+        typeDetial.add("ราคาต่ำกว่า 500 บาท");
+        typeId.add("14");
+        typeDetial.add("ราคา 501 – 1000 บาท");
+        typeId.add("15");
+        typeDetial.add("ราคา 1001 – 2000 บาท");
+        typeId.add("16");
+        typeDetial.add("ราคามากกว่า 2000 บาท");
+        typeId.add("17");
+        typeDetial.add("ห้างสรรพสินค้า");
+        typeId.add("18");
+        typeDetial.add("ซุปเปอร์เซ็นเตอร์");
+        typeId.add("19");
+        typeDetial.add("ซุปเปอร์มาร์เก็ต");
+        typeId.add("20");
+        typeDetial.add("ร้านสะดวกซื้อ");
+        typeId.add("21");
+        typeDetial.add("ร้านค้าปลีก");
+        typeId.add("22");
+        typeDetial.add("สถานบริการอาบ อบ นวด");
+        typeId.add("23");
+        typeDetial.add("สถานบันเทิงดิสโก้เธค ผับ บาร์");
+        typeId.add("24");
+        typeDetial.add("สถานบันเทิงร้านคาราโอเกะ");
 
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, typeDetial);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -190,9 +223,9 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String item = parent.getItemAtPosition(position).toString();
-
+        TID = typeId.get(position);
         // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        Toast.makeText(parent.getContext(), "Selected: " + item + " ID" + TID, Toast.LENGTH_LONG).show();
     }
 
     @Override

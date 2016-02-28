@@ -17,16 +17,18 @@
             android:orientation="vertical">
 
             <RatingBar
-                android:id="@+id/ratingBar"
+                android:id="@+id/ddRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:rating="@android:integer/config_longAnimTime" />
+                android:rating="@android:integer/config_longAnimTime"
+                android:stepSize="1" />
 
             <EditText
+                android:id="@+id/ddTxtReview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Comment"
+                android:hint="Review"
                 android:inputType="textMultiLine"
                 android:maxLines="3"
                 android:minLines="2" />
@@ -36,12 +38,13 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/ddImage"
                     android:layout_width="180dp"
                     android:layout_height="120dp"
                     android:layout_marginTop="12dp" />
 
                 <Button
-                    android:id="@+id/button_test"
+                    android:id="@+id/ddBtnImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Images" />
@@ -54,14 +57,14 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/cancel"
+                    android:id="@+id/ddBtnCancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="CANCEL" />
 
                 <Button
-                    android:id="@+id/okay"
+                    android:id="@+id/ddBtnOk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
