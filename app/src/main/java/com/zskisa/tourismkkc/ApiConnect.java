@@ -5,6 +5,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zskisa.tourismkkc.apimodel.ApiFeed;
+import com.zskisa.tourismkkc.apimodel.ApiFeedRequest;
+import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
@@ -183,20 +185,23 @@ public class ApiConnect {
         }
     }
 
-    public ApiFeed feed(ApiLogin apiLogin) {
-        RequestBody formBody = new FormBody.Builder()
-                .add("user_email", apiLogin.getUserEmail())
-                .add("user_password", apiLogin.getUserPassword())
-                .add("user_fb_id", apiLogin.getFbID())
-                .add("user_fname", apiLogin.getUserFname())
-                .add("user_lname", apiLogin.getUserLname())
-                .build();
-
+    public ApiFeed feed(ApiFeedRequest apiFeedRequest) {
         Request.Builder builder = new Request.Builder();
-        Request request = builder
-                .url(URL + "feed")
-                .post(formBody)
-                .build();
+        builder.url(URL + "feed/" + apiFeedRequest.getStart() + "/" + apiFeedRequest.getEnd());
+
+        RequestBody formBody;
+        if (apiFeedRequest.getApiLogin() != null) {
+            formBody = new FormBody.Builder()
+                    .add("user_email", apiFeedRequest.getApiLogin().getUserEmail())
+                    .add("user_password", apiFeedRequest.getApiLogin().getUserPassword())
+                    .add("user_fb_id", apiFeedRequest.getApiLogin().getFbID())
+                    .add("user_fname", apiFeedRequest.getApiLogin().getUserFname())
+                    .add("user_lname", apiFeedRequest.getApiLogin().getUserLname())
+                    .build();
+            builder.post(formBody);
+        }
+
+        Request request = builder.build();
 
         try {
             Response response = okHttpClient.newCall(request).execute();
@@ -233,6 +238,29 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in feed : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiFeedReview review(String placesID, String start, String end) {
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "places_review/" + placesID + "/" + start + "/" + end)
+                .get()
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiFeedReview.class);
+            } else {
+                Log.d(TAG, "Not Success - code in review : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in review : " + e.getMessage());
             return null;
         }
     }

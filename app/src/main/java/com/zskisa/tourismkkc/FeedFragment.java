@@ -16,12 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zskisa.tourismkkc.apimodel.ApiFeed;
+import com.zskisa.tourismkkc.apimodel.ApiFeedRequest;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.FeedAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeedFragment extends Fragment {
@@ -29,6 +32,13 @@ public class FeedFragment extends Fragment {
     private View view;
     private RecyclerView rv;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayoutManager llm;
+    private FeedAdapter adapter;
+    private List<ApiFeed.DataEntity.ResultEntity> feeds;
+    private boolean loading = true;
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private ApiFeedRequest apiFeedRequest;
+    private int load_plus = 10;
 
     @Nullable
     @Override
@@ -38,11 +48,36 @@ public class FeedFragment extends Fragment {
         rv = (RecyclerView) view.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        FeedFragment.Connect connect = new Connect();
-        connect.execute(MainActivity.login);
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) //check for scroll down
+                {
+                    visibleItemCount = llm.getChildCount();
+                    totalItemCount = llm.getItemCount();
+                    pastVisiblesItems = llm.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            loading = false;
+                            Toast.makeText(getActivity(), "Load more", Toast.LENGTH_SHORT).show();
+                            //โหลดรีวิวสถานที่
+                            //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+                            FeedFragment.Connect connect = new Connect();
+                            connect.execute(apiFeedRequest);
+
+                            //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
+                            apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
+                            apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
+                        }
+                    }
+                }
+            }
+        });
 
         // find the layout
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -51,14 +86,33 @@ public class FeedFragment extends Fragment {
 
             @Override
             public void onRefresh() {
-                // TODO : request data here
+                feeds.clear();
+                //ล้างค่า apiFeedRequest ให้เริ่ม start=1,end=10
+                apiFeedRequest.setStart("1");
+                apiFeedRequest.setEnd("10");
+
                 FeedFragment.Connect connect = new Connect();
-                connect.execute(MainActivity.login);
+                connect.execute(apiFeedRequest);
+
+                //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
+                apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
+                apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
             }
         });
         // sets the colors used in the refresh animation
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_dark, R.color.primary,
                 R.color.cardview_dark_background, R.color.cardview_light_background);
+
+        //ตั้งค่าเริ่มต้น apiFeedRequest และดึงค่า login จาก MainActivity
+        apiFeedRequest = new ApiFeedRequest();
+        apiFeedRequest.setApiLogin(MainActivity.login);
+
+        FeedFragment.Connect connect = new Connect();
+        connect.execute(apiFeedRequest);
+
+        //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
+        apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
+        apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
         return view;
     }
 
@@ -83,40 +137,59 @@ public class FeedFragment extends Fragment {
         });
     }
 
-    class Connect extends AsyncTask<ApiLogin, Void, ApiFeed> {
+    class Connect extends AsyncTask<ApiFeedRequest, Void, ApiFeed> {
         ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            /*
-            * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
-            */
-            progressDialog = new ProgressDialog(getActivity(),
-                    R.style.AppTheme_Dark_Dialog);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Loading...");
-            progressDialog.show();
+            if (!swipeRefreshLayout.isRefreshing() && loading) {
+               /*
+                * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
+                */
+                progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Loading...");
+                progressDialog.show();
+            }
+
+            if (feeds == null) {
+                feeds = new ArrayList<ApiFeed.DataEntity.ResultEntity>();
+            }
         }
 
         @Override
-        protected ApiFeed doInBackground(ApiLogin... params) {
+        protected ApiFeed doInBackground(ApiFeedRequest... params) {
             return MainActivity.api.feed(params[0]);
         }
 
         @Override
         protected void onPostExecute(ApiFeed apiFeed) {
             super.onPostExecute(apiFeed);
-            progressDialog.dismiss();
-            if (apiFeed != null && apiFeed.getData().getResult() != null && apiFeed.getData().getResult().size() != 0) {
-                FeedAdapter adapter = new FeedAdapter(apiFeed.getData().getResult());
-                rv.setAdapter(adapter);
+            if (apiFeed != null) {
+                if (apiFeed.getData().getResult().size() > 0) {
+                    for (ApiFeed.DataEntity.ResultEntity temp : apiFeed.getData().getResult()) {
+                        feeds.add(temp);
+                    }
+                    if (rv.getAdapter() == null) {
+                        adapter = new FeedAdapter(feeds);
+                        rv.setAdapter(adapter);
+                    } else {
+                        //สั่งให้ adapter อัพเดทข้อมูล
+                        adapter.notifyDataSetChanged();
+                    }
+                }
             } else {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
             }
 
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
             if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
             }
+            loading = true;
         }
     }
 }

@@ -8,7 +8,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +22,27 @@ import android.widget.Toast;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
+import com.zskisa.tourismkkc.apimodel.FeedAdapter;
+import com.zskisa.tourismkkc.apimodel.ReviewAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetailFragment extends Fragment {
     private View view;
     private String placesID;
     private SliderLayout mDemoSlider;
     private TextView txtName, txtDetail;
+    private RecyclerView rcvReview;
+    private LinearLayoutManager llm;
+    private ReviewAdapter adapter;
+    private List<ApiFeedReview.DataEntity.ResultEntity> reviews;
+    private boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    int num_review = 1;
+    int review_plus = 5;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,6 +56,38 @@ public class DetailFragment extends Fragment {
         mDemoSlider = (SliderLayout) view.findViewById(R.id.slider);
         mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
 
+        rcvReview = (RecyclerView) view.findViewById(R.id.recycler_review);
+        rcvReview.setHasFixedSize(true);
+
+        llm = new LinearLayoutManager(getActivity());
+        llm.setAutoMeasureEnabled(true);
+        rcvReview.setLayoutManager(llm);
+
+        rcvReview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) //check for scroll down
+                {
+                    visibleItemCount = llm.getChildCount();
+                    totalItemCount = llm.getItemCount();
+                    pastVisiblesItems = llm.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            loading = false;
+//                            Toast.makeText(getActivity(), "Load more review", Toast.LENGTH_SHORT).show();
+                            //โหลดรีวิวสถานที่
+                            //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+                            DetailFragment.ConnectReview connectReview = new ConnectReview();
+                            connectReview.execute(placesID, String.valueOf(num_review), String.valueOf(num_review + review_plus));
+                            num_review = num_review + review_plus;
+                        }
+                    }
+                }
+            }
+        });
+
         return view;
     }
 
@@ -49,9 +98,15 @@ public class DetailFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             placesID = bundle.getString("placesID");
-            Toast.makeText(getActivity(), placesID, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), placesID, Toast.LENGTH_SHORT).show();
+            //โหลดข้อมูลสถานที่
             DetailFragment.Connect connect = new Connect();
             connect.execute(placesID);
+            //โหลดรีวิวสถานที่
+            //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+            DetailFragment.ConnectReview connectReview = new ConnectReview();
+            connectReview.execute(placesID, String.valueOf(num_review), String.valueOf(num_review + review_plus));
+            num_review = num_review + review_plus;
         }
 
         //แก้ไขปุ่ม FloatingActionButton ให้เป็นการทำงานเฉพาะหน้านั้น
@@ -115,6 +170,43 @@ public class DetailFragment extends Fragment {
                     }
                 }
             }
+        }
+    }
+
+    class ConnectReview extends AsyncTask<String, Void, ApiFeedReview> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (reviews == null) {
+                reviews = new ArrayList<ApiFeedReview.DataEntity.ResultEntity>();
+            }
+        }
+
+        @Override
+        protected ApiFeedReview doInBackground(String... params) {
+            return MainActivity.api.review(params[0], params[1], params[2]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiFeedReview apiFeedReview) {
+            super.onPostExecute(apiFeedReview);
+            if (apiFeedReview != null) {
+                if (apiFeedReview.getData().getResult().size() > 0) {
+                    for (ApiFeedReview.DataEntity.ResultEntity temp : apiFeedReview.getData().getResult()) {
+                        reviews.add(temp);
+                    }
+                    if (rcvReview.getAdapter() == null) {
+                        adapter = new ReviewAdapter(reviews);
+                        rcvReview.setAdapter(adapter);
+                    } else {
+                        //สั่งให้ adapter อัพเดทข้อมูล
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            } else {
+                Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+            loading = true;
         }
     }
 }

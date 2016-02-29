@@ -73,7 +73,7 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
                         //ดึงค่าตำแหน่งจากหน้า MainActivity
                         gpsMapLat = String.valueOf(MainActivity.location.getLatitude());
                         gpsMapLong = String.valueOf(MainActivity.location.getLongitude());
-                        
+
                         ApiRegisterPlaces registerPlaces = new ApiRegisterPlaces();
                         registerPlaces.setApiLogin(MainActivity.login);
                         registerPlaces.setPlaces_name(sName);

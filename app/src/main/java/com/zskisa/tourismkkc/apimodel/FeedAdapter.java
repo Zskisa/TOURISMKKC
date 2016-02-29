@@ -79,7 +79,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     public static class FeedViewHolder extends RecyclerView.ViewHolder {
 
-
         CardView cv;
         TextView placesName;
         TextView typeName;

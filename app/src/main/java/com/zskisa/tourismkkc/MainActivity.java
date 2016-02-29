@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     * สร้าง GoogleApiClient ไว้เรียกใช้งาน GoogleService
     * เช่น LocationServices เพื่อให้ได้ตำแหน่งที่อยู่ปัจจุบัน
      */
-    GoogleApiClient googleApiClient;
+    public static GoogleApiClient googleApiClient;
 
     /*
     * สร้างตัวแปร Location ไว้ให้หน้าอื่นเรียกใช้งาน
@@ -369,9 +368,11 @@ public class MainActivity extends AppCompatActivity
             *  สร้าง request เพื่อร้องขอตำแหน่ง GPS โดยมีค่าที่กำหนดไว้ดังนี้
             *   - อัพเดทตำแหน่งทุกๆ 5 วินาที ที่เปิดแอพอยู่
             *   - ในกรณีที่อ่านค่าเร็วได้กำหนดไว้ที่ 2 วินาที(กรณีมีตำแหน่งเก่าอยู่แล้วและเป็นตำแหน่งเดียวกัน)
+            *   - อัพเดทแค่ 5 ครั้ง เงือนจากจะเปลืองแบต
              */
             LocationRequest request = new LocationRequest()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setNumUpdates(5)
                     .setInterval(5000)
                     .setFastestInterval(2000);
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, request, this);
@@ -396,7 +397,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
-        Toast.makeText(getApplicationContext(), "Latitude : " + location.getLatitude() + "\n"
-                + "Longitude : " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "Latitude : " + location.getLatitude() + "\n"
+//                + "Longitude : " + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 }
