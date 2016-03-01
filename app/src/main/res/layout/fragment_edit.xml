@@ -1,14 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="50dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ข้อมูลความสนใจของคุณ"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยว"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/chk01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยวเชิงธรรมชาติ" />
+
+                <CheckBox
+                    android:id="@+id/chk02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยวเชิงวัฒนธรรม" />
+
+                <CheckBox
+                    android:id="@+id/chk03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยวเชิงประวัติศาสตร์" />
+
+                <CheckBox
+                    android:id="@+id/chk04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยวเชิงเกษตร" />
+
+                <CheckBox
+                    android:id="@+id/chk05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานที่ท่องเที่ยวเชิงนันทนาการ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหาร"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/chk06"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารไทย" />
+
+                <CheckBox
+                    android:id="@+id/chk07"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารภาคอีสาน" />
+
+                <CheckBox
+                    android:id="@+id/chk08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารภาคใต้" />
+
+                <CheckBox
+                    android:id="@+id/chk09"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารภาคเหนือ" />
+
+                <CheckBox
+                    android:id="@+id/chk10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารซีฟู๊ด" />
+
+                <CheckBox
+                    android:id="@+id/chk11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารฟาสฟู๊ด" />
+
+                <CheckBox
+                    android:id="@+id/chk12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="อาหารต่างชาติ" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ที่พัก"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/chk13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ราคาต่ำกว่า 500" />
+
+                <CheckBox
+                    android:id="@+id/chk14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ราคา 501 – 1000" />
+
+                <CheckBox
+                    android:id="@+id/chk15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ราคา 1001 – 2000" />
+
+                <CheckBox
+                    android:id="@+id/chk16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ราคามากกว่า 2000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ร้านค้า"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/chk17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ห้างสรรพสินค้า" />
+
+                <CheckBox
+                    android:id="@+id/chk18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ซุปเปอร์เซ็นเตอร์" />
+
+                <CheckBox
+                    android:id="@+id/chk19"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ซุปเปอร์มาร์เก็ต" />
+
+                <CheckBox
+                    android:id="@+id/chk20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ร้านสะดวกซื้อ" />
+
+                <CheckBox
+                    android:id="@+id/chk21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ร้านค้าปลีก" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานบันเทิง"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/chk22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานบริการอาบ อบ นวด" />
+
+                <CheckBox
+                    android:id="@+id/chk23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานบันเทิงดิสโก้เธค ผับ บาร์" />
+
+                <CheckBox
+                    android:id="@+id/chk24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="สถานบันเทิงร้านคาราโอเกะ" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/fe_btn_updates"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Fragment EDIT"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="อัพเดทข้อมูล" />
 </RelativeLayout>
