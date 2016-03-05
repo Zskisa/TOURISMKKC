@@ -2,6 +2,7 @@ package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -163,6 +164,18 @@ public class EditFragment extends Fragment {
     }
 
     class Connect extends AsyncTask<ApiProfileRequest, Void, ApiStatus> {
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+        }
+
         @Override
         protected ApiStatus doInBackground(ApiProfileRequest... params) {
             return MainActivity.api.editProfile(params[0]);
@@ -172,6 +185,9 @@ public class EditFragment extends Fragment {
         protected void onPostExecute(ApiStatus apiStatus) {
             super.onPostExecute(apiStatus);
             if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 Toast.makeText(getActivity(), "แก้ไขข้อมูลสำเร็จ", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
@@ -180,6 +196,18 @@ public class EditFragment extends Fragment {
     }
 
     class Profile extends AsyncTask<ApiProfileRequest, Void, ApiProfile> {
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+        }
+
         @Override
         protected ApiProfile doInBackground(ApiProfileRequest... params) {
             return MainActivity.api.profile(params[0]);
@@ -201,6 +229,72 @@ public class EditFragment extends Fragment {
                     if (id.equalsIgnoreCase("03")) {
                         chk03.setChecked(true);
                     }
+                    if (id.equalsIgnoreCase("04")) {
+                        chk04.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("05")) {
+                        chk05.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("06")) {
+                        chk06.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("07")) {
+                        chk07.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("08")) {
+                        chk08.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("09")) {
+                        chk09.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("10")) {
+                        chk10.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("11")) {
+                        chk11.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("12")) {
+                        chk12.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("13")) {
+                        chk13.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("14")) {
+                        chk14.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("15")) {
+                        chk15.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("16")) {
+                        chk16.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("17")) {
+                        chk17.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("18")) {
+                        chk18.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("19")) {
+                        chk19.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("20")) {
+                        chk20.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("21")) {
+                        chk21.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("22")) {
+                        chk22.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("23")) {
+                        chk23.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("24")) {
+                        chk24.setChecked(true);
+                    }
+                }
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
                 }
             } else {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();

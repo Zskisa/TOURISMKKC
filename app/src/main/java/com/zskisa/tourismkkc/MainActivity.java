@@ -342,11 +342,6 @@ public class MainActivity extends AppCompatActivity
 
         googleMap.setMyLocationEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(thailand));
-        googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(16.477551, 102.8209163))
-                .title("Complex KKU")
-                .snippet("ดินแดนสวยงาม สว่างมากจ้า")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     @Override
@@ -427,7 +422,6 @@ public class MainActivity extends AppCompatActivity
             super.onPostExecute(apiFeed);
             if (apiFeed.getStatus().equalsIgnoreCase("success")) {
                 Toast.makeText(getApplication(), "โหลดสำเร็จ", Toast.LENGTH_LONG).show();
-                LatLng thailand = new LatLng(12.8819714, 92.4392124);
 
                 if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
