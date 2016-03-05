@@ -5,10 +5,13 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zskisa.tourismkkc.apimodel.ApiFeed;
+import com.zskisa.tourismkkc.apimodel.ApiFeedNearRequest;
 import com.zskisa.tourismkkc.apimodel.ApiFeedRequest;
 import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
+import com.zskisa.tourismkkc.apimodel.ApiProfile;
+import com.zskisa.tourismkkc.apimodel.ApiProfileRequest;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
 import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiReview;
@@ -219,6 +222,40 @@ public class ApiConnect {
         }
     }
 
+    public ApiFeed feedNear(ApiFeedNearRequest apiFeedNearRequest) {
+        Request.Builder builder = new Request.Builder();
+        builder.url(URL + "feed_near");
+
+        RequestBody formBody;
+        formBody = new FormBody.Builder()
+                .add("user_email", apiFeedNearRequest.getApiLogin().getUserEmail())
+                .add("user_password", apiFeedNearRequest.getApiLogin().getUserPassword())
+                .add("user_fb_id", apiFeedNearRequest.getApiLogin().getFbID())
+                .add("user_fname", apiFeedNearRequest.getApiLogin().getUserFname())
+                .add("user_lname", apiFeedNearRequest.getApiLogin().getUserLname())
+                .add("location_lat", apiFeedNearRequest.getLocationLat())
+                .add("location_lng", apiFeedNearRequest.getLocationLng())
+                .build();
+        builder.post(formBody);
+
+        Request request = builder.build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiFeed.class);
+            } else {
+                Log.d(TAG, "Not Success - code in feed_near : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in feed_near : " + e.getMessage());
+            return null;
+        }
+    }
+
     public ApiPlaces places(String placesID) {
         Request.Builder builder = new Request.Builder();
         Request request = builder
@@ -261,6 +298,76 @@ public class ApiConnect {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "ERROR in review : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiProfile profile(ApiProfileRequest profileRequest) {
+        MultipartBody.Builder formDataPart = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("user_email", profileRequest.getApiLogin().getUserEmail())
+                .addFormDataPart("user_password", profileRequest.getApiLogin().getUserPassword())
+                .addFormDataPart("user_fb_id", profileRequest.getApiLogin().getFbID())
+                .addFormDataPart("user_fname", profileRequest.getApiLogin().getUserFname())
+                .addFormDataPart("user_lname", profileRequest.getApiLogin().getUserLname());
+
+        RequestBody formBody = formDataPart.build();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "profile")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiProfile.class);
+            } else {
+                Log.d(TAG, "Not Success - code in profile : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in profile : " + e.getMessage());
+            return null;
+        }
+    }
+
+    public ApiStatus editProfile(ApiProfileRequest profileRequest) {
+        MultipartBody.Builder formDataPart = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("user_email", profileRequest.getApiLogin().getUserEmail())
+                .addFormDataPart("user_password", profileRequest.getApiLogin().getUserPassword())
+                .addFormDataPart("user_fb_id", profileRequest.getApiLogin().getFbID())
+                .addFormDataPart("user_fname", profileRequest.getApiLogin().getUserFname())
+                .addFormDataPart("user_lname", profileRequest.getApiLogin().getUserLname());
+
+        for (int i = 0; i < profileRequest.getTypeDetailID().size(); i++) {
+            formDataPart.addFormDataPart("type_detail_id[" + i + "]", profileRequest.getTypeDetailID().get(i));
+        }
+
+        RequestBody formBody = formDataPart.build();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder
+                .url(URL + "edit_profile")
+                .post(formBody)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                Gson gson = new GsonBuilder().create();
+                return gson.fromJson(response.body().string(), ApiStatus.class);
+            } else {
+                Log.d(TAG, "Not Success - code in edit_profile : " + response.code());
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "ERROR in edit_profile : " + e.getMessage());
             return null;
         }
     }

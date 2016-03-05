@@ -1,6 +1,8 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,7 +12,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.zskisa.tourismkkc.apimodel.ApiProfile;
+import com.zskisa.tourismkkc.apimodel.ApiProfileRequest;
+import com.zskisa.tourismkkc.apimodel.ApiStatus;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class EditFragment extends Fragment {
 
@@ -28,6 +35,12 @@ public class EditFragment extends Fragment {
         if (MainActivity.floatingActionButton.isShown()) {
             MainActivity.floatingActionButton.hide();
         }
+
+        ApiProfileRequest apiProfileRequest = new ApiProfileRequest();
+        apiProfileRequest.setApiLogin(MainActivity.login);
+
+        EditFragment.Profile profile = new Profile();
+        profile.execute(apiProfileRequest);
 
         //เชื่อมปุ่มต่างๆ
         initial(view);
@@ -108,7 +121,13 @@ public class EditFragment extends Fragment {
                 if (chk24.isChecked()) {
                     id.add("24");
                 }
-                Toast.makeText(getActivity(), id.toString(), Toast.LENGTH_SHORT).show();
+
+                ApiProfileRequest apiProfileRequest = new ApiProfileRequest();
+                apiProfileRequest.setApiLogin(MainActivity.login);
+                apiProfileRequest.setTypeDetailID(id);
+
+                EditFragment.Connect connect = new Connect();
+                connect.execute(apiProfileRequest);
             }
         });
 
@@ -141,5 +160,51 @@ public class EditFragment extends Fragment {
         chk23 = (CheckBox) v.findViewById(R.id.chk23);
         chk24 = (CheckBox) v.findViewById(R.id.chk24);
         button = (Button) v.findViewById(R.id.fe_btn_updates);
+    }
+
+    class Connect extends AsyncTask<ApiProfileRequest, Void, ApiStatus> {
+        @Override
+        protected ApiStatus doInBackground(ApiProfileRequest... params) {
+            return MainActivity.api.editProfile(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiStatus apiStatus) {
+            super.onPostExecute(apiStatus);
+            if (apiStatus.getStatus().equalsIgnoreCase("success")) {
+                Toast.makeText(getActivity(), "แก้ไขข้อมูลสำเร็จ", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    class Profile extends AsyncTask<ApiProfileRequest, Void, ApiProfile> {
+        @Override
+        protected ApiProfile doInBackground(ApiProfileRequest... params) {
+            return MainActivity.api.profile(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiProfile apiProfile) {
+            super.onPostExecute(apiProfile);
+            if (apiProfile.getStatus().equalsIgnoreCase("success")) {
+                Toast.makeText(getActivity(), "โหลดสำเร็จ", Toast.LENGTH_LONG).show();
+                for (int i = 0; i < apiProfile.getData().getResult().size(); i++) {
+                    String id = apiProfile.getData().getResult().get(i).getType_detail_id();
+                    if (id.equalsIgnoreCase("01")) {
+                        chk01.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("02")) {
+                        chk02.setChecked(true);
+                    }
+                    if (id.equalsIgnoreCase("03")) {
+                        chk03.setChecked(true);
+                    }
+                }
+            } else {
+                Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -43,6 +44,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
+import com.zskisa.tourismkkc.apimodel.ApiFeed;
+import com.zskisa.tourismkkc.apimodel.ApiFeedNearRequest;
 import com.zskisa.tourismkkc.apimodel.ApiLogin;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity
     public static FloatingActionButton floatingActionButton;
 
     private SharedPreferences sp;
+
+    private GoogleMap mGoogleMap;
 
     @SuppressLint("CommitPrefEdits")
     @Override
@@ -323,6 +328,16 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        ApiFeedNearRequest apiFeedNearRequest = new ApiFeedNearRequest();
+        apiFeedNearRequest.setApiLogin(MainActivity.login);
+        apiFeedNearRequest.setLocationLat(String.valueOf(MainActivity.location.getLatitude()));
+        apiFeedNearRequest.setLocationLng(String.valueOf(MainActivity.location.getLongitude()));
+
+        MainActivity.Connect connect = new Connect();
+        connect.execute(apiFeedNearRequest);
+
+        mGoogleMap = googleMap;
+
         LatLng thailand = new LatLng(12.8819714, 92.4392124);
 
         googleMap.setMyLocationEnabled(true);
@@ -399,5 +414,42 @@ public class MainActivity extends AppCompatActivity
         this.location = location;
 //        Toast.makeText(getApplicationContext(), "Latitude : " + location.getLatitude() + "\n"
 //                + "Longitude : " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+    }
+
+    class Connect extends AsyncTask<ApiFeedNearRequest, Void, ApiFeed> {
+        @Override
+        protected ApiFeed doInBackground(ApiFeedNearRequest... params) {
+            return MainActivity.api.feedNear(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ApiFeed apiFeed) {
+            super.onPostExecute(apiFeed);
+            if (apiFeed.getStatus().equalsIgnoreCase("success")) {
+                Toast.makeText(getApplication(), "โหลดสำเร็จ", Toast.LENGTH_LONG).show();
+                LatLng thailand = new LatLng(12.8819714, 92.4392124);
+
+                if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                for (int i = 0; i < apiFeed.getData().getResult().size(); i++) {
+                    mGoogleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(apiFeed.getData().getResult().get(i).getLocation_lat()), Double.parseDouble(apiFeed.getData().getResult().get(i).getLocation_lng())))
+                            .title(apiFeed.getData().getResult().get(i).getPlaces_name())
+                            .snippet(apiFeed.getData().getResult().get(i).getPlaces_desc())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                }
+
+            } else {
+                Toast.makeText(getApplication(), "ผิดพลาด", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
