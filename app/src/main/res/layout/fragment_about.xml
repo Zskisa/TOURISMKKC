@@ -86,13 +86,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Itsarapon Chaiyang"
+                        android:text="Luckana Choosri"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="android_studio@gmail.com"
+                        android:text="pinkky_za_za@hotmail.com"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </LinearLayout>
             </LinearLayout>
@@ -127,7 +127,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="android_studio@gmail.com"
+                        android:text="imme1987@hotmail.com"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </LinearLayout>
             </LinearLayout>
