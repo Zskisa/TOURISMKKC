@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +37,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -331,18 +333,23 @@ public class MainActivity extends AppCompatActivity
 
         ApiFeedNearRequest apiFeedNearRequest = new ApiFeedNearRequest();
         apiFeedNearRequest.setApiLogin(MainActivity.login);
-        apiFeedNearRequest.setLocationLat(String.valueOf(MainActivity.location.getLatitude()));
-        apiFeedNearRequest.setLocationLng(String.valueOf(MainActivity.location.getLongitude()));
+        if (MainActivity.location == null) {
+            apiFeedNearRequest.setLocationLat(String.valueOf(16.4739857));
+            apiFeedNearRequest.setLocationLng(String.valueOf(102.8215003));
+        } else {
+            apiFeedNearRequest.setLocationLat(String.valueOf(MainActivity.location.getLatitude()));
+            apiFeedNearRequest.setLocationLng(String.valueOf(MainActivity.location.getLongitude()));
+        }
 
         MainActivity.Connect connect = new Connect();
         connect.execute(apiFeedNearRequest);
 
         mGoogleMap = googleMap;
 
-        LatLng thailand = new LatLng(12.8819714, 92.4392124);
-
         googleMap.setMyLocationEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(thailand));
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        mGoogleMap.animateCamera(cameraUpdate);
     }
 
     @Override
@@ -418,6 +425,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     class Connect extends AsyncTask<ApiFeedNearRequest, Void, ApiFeed> {
+
         @Override
         protected ApiFeed doInBackground(ApiFeedNearRequest... params) {
             return MainActivity.api.feedNear(params[0]);
@@ -426,6 +434,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(ApiFeed apiFeed) {
             super.onPostExecute(apiFeed);
+
             if (apiFeed.getStatus().equalsIgnoreCase("success")) {
                 Toast.makeText(getApplication(), "โหลดสำเร็จ", Toast.LENGTH_LONG).show();
 
@@ -446,7 +455,6 @@ public class MainActivity extends AppCompatActivity
                             .snippet(apiFeed.getData().getResult().get(i).getPlaces_desc())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 }
-
             } else {
                 Toast.makeText(getApplication(), "ผิดพลาด", Toast.LENGTH_LONG).show();
             }
