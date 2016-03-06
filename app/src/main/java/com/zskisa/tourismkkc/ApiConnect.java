@@ -233,6 +233,7 @@ public class ApiConnect {
                 .add("user_lname", apiFeedNearRequest.getApiLogin().getUserLname())
                 .add("location_lat", apiFeedNearRequest.getLocationLat())
                 .add("location_lng", apiFeedNearRequest.getLocationLng())
+                .add("distance", apiFeedNearRequest.getDistance())
                 .build();
         builder.post(formBody);
 

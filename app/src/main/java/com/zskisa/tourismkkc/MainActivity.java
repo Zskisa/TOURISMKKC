@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -43,6 +44,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.MemoryPolicy;
@@ -348,8 +351,15 @@ public class MainActivity extends AppCompatActivity
 
         googleMap.setMyLocationEnabled(true);
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 12);
         mGoogleMap.animateCamera(cameraUpdate);
+
+        //วาดเส้นรัศมี
+        Circle circle = mGoogleMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(Double.parseDouble(apiFeedNearRequest.getDistance()))
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.rgb(200,230,255)));
     }
 
     @Override
@@ -448,6 +458,7 @@ public class MainActivity extends AppCompatActivity
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
+                Toast.makeText(getApplication(), apiFeed.getData().getReason(), Toast.LENGTH_LONG).show();
                 for (int i = 0; i < apiFeed.getData().getResult().size(); i++) {
                     mGoogleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(apiFeed.getData().getResult().get(i).getLocation_lat()), Double.parseDouble(apiFeed.getData().getResult().get(i).getLocation_lng())))
