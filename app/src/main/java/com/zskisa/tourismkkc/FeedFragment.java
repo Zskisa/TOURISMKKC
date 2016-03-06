@@ -34,7 +34,6 @@ public class FeedFragment extends Fragment {
     private boolean loading = true;
     private int pastVisiblesItems, visibleItemCount, totalItemCount;
     private ApiFeedRequest apiFeedRequest;
-    private int load_plus = 10;
 
     @Nullable
     @Override
@@ -65,10 +64,6 @@ public class FeedFragment extends Fragment {
                             //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
                             FeedFragment.Connect connect = new Connect();
                             connect.execute(apiFeedRequest);
-
-                            //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-                            apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
-                            apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
                         }
                     }
                 }
@@ -83,16 +78,11 @@ public class FeedFragment extends Fragment {
             @Override
             public void onRefresh() {
                 feeds.clear();
-                //ล้างค่า apiFeedRequest ให้เริ่ม start=1,end=10
-                apiFeedRequest.setStart("1");
-                apiFeedRequest.setEnd("10");
+                //ล้างค่า apiFeedRequest ให้เริ่มใหม่
+                apiFeedRequest.reset();
 
                 FeedFragment.Connect connect = new Connect();
                 connect.execute(apiFeedRequest);
-
-                //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-                apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
-                apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
             }
         });
         // sets the colors used in the refresh animation
@@ -106,9 +96,6 @@ public class FeedFragment extends Fragment {
         FeedFragment.Connect connect = new Connect();
         connect.execute(apiFeedRequest);
 
-        //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-        apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
-        apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
         return view;
     }
 
@@ -174,6 +161,8 @@ public class FeedFragment extends Fragment {
                         //สั่งให้ adapter อัพเดทข้อมูล
                         adapter.notifyDataSetChanged();
                     }
+                    //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
+                    apiFeedRequest.prePareNext();
                 }
             } else {
                 Toast.makeText(getActivity(), "ผิดพลาด", Toast.LENGTH_LONG).show();

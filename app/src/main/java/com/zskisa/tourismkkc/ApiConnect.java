@@ -197,12 +197,13 @@ public class ApiConnect {
                     .add("user_fb_id", apiFeedRequest.getApiLogin().getFbID())
                     .add("user_fname", apiFeedRequest.getApiLogin().getUserFname())
                     .add("user_lname", apiFeedRequest.getApiLogin().getUserLname())
+                    .add("like", apiFeedRequest.getLike())
                     .build();
             builder.post(formBody);
         }
 
         Request request = builder.build();
-
+        Log.d(TAG, "Feed Start:" + apiFeedRequest.getStart() + " End:" + apiFeedRequest.getEnd());
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
