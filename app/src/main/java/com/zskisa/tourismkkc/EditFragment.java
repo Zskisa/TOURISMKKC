@@ -1,11 +1,9 @@
 package com.zskisa.tourismkkc;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import com.zskisa.tourismkkc.apimodel.ApiProfileRequest;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class EditFragment extends Fragment {
 

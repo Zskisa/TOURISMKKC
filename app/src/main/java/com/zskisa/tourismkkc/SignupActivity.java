@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.ApiRegister;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
 

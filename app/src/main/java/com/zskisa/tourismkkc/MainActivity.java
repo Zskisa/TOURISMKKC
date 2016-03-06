@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -387,10 +388,15 @@ public class MainActivity extends AppCompatActivity
                     .setFastestInterval(2000);
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, request, this);
         } else {
-            //กรณีอุปกรณืไม่ได้เปิด GPS ไว้จะบังคับให้ไปหน้าตั้งค่า เพื่อเปิดการใช้งาน GPS ก่อน
-            Toast.makeText(getApplicationContext(), "กรุณาเปิดการทำงาน ระบบระบุตำแหน่ง", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
+            //ตรวจสอบการเปิด GPS สำหรับอีกแบบทีไม่ใช่ดึงจาก Google Api
+            LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+            boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if (!enabled) {
+                //กรณีอุปกรณืไม่ได้เปิด GPS ไว้จะบังคับให้ไปหน้าตั้งค่า เพื่อเปิดการใช้งาน GPS ก่อน
+                Toast.makeText(getApplicationContext(), "กรุณาเปิดการทำงาน ระบบระบุตำแหน่ง", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
         }
     }
 

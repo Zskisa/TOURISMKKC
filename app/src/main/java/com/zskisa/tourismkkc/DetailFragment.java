@@ -3,19 +3,14 @@ package com.zskisa.tourismkkc;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +19,6 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
-import com.zskisa.tourismkkc.apimodel.FeedAdapter;
 import com.zskisa.tourismkkc.apimodel.ReviewAdapter;
 
 import java.util.ArrayList;

@@ -16,12 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Api;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zskisa.tourismkkc.apimodel.ApiFeed;
 import com.zskisa.tourismkkc.apimodel.ApiFeedRequest;
-import com.zskisa.tourismkkc.apimodel.ApiLogin;
 import com.zskisa.tourismkkc.apimodel.FeedAdapter;
 
 import java.util.ArrayList;
@@ -71,8 +67,8 @@ public class FeedFragment extends Fragment {
                             connect.execute(apiFeedRequest);
 
                             //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-                            apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
-                            apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
+                            apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
+                            apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
                         }
                     }
                 }
@@ -95,8 +91,8 @@ public class FeedFragment extends Fragment {
                 connect.execute(apiFeedRequest);
 
                 //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-                apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
-                apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
+                apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
+                apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
             }
         });
         // sets the colors used in the refresh animation
@@ -111,8 +107,8 @@ public class FeedFragment extends Fragment {
         connect.execute(apiFeedRequest);
 
         //อัพเดทค่า apiFeedRequest ไว้ใช้ดึงค่าครั้งต่อไป
-        apiFeedRequest.setStart(apiFeedRequest.getEnd() + 1);
-        apiFeedRequest.setEnd(apiFeedRequest.getEnd() + load_plus);
+        apiFeedRequest.setStart(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + 1));
+        apiFeedRequest.setEnd(String.valueOf(Integer.parseInt(apiFeedRequest.getEnd()) + load_plus));
         return view;
     }
 

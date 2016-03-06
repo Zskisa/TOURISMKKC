@@ -17,9 +17,6 @@ import com.zskisa.tourismkkc.apimodel.ApiRegisterPlaces;
 import com.zskisa.tourismkkc.apimodel.ApiReview;
 import com.zskisa.tourismkkc.apimodel.ApiStatus;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 
