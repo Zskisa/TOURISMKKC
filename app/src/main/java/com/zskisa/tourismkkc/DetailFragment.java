@@ -254,7 +254,18 @@ public class DetailFragment extends Fragment {
                 googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
 
+                ShareLinkContent content;
+                String url = "http://www.tourism-kkc.com/main/places/";
+
                 if (apiPlaces.getPhotos() != null && apiPlaces.getPhotos().size() > 0) {
+
+                    content = new ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse(url + placesID))
+                            .setContentTitle(apiPlaces.getPlaces_name())
+                            .setImageUrl(Uri.parse(apiPlaces.getPhotos().get(0).getUrl()))
+                            .setContentDescription(apiPlaces.getPlaces_desc())
+                            .build();
+
                     int size = apiPlaces.getPhotos().size();
                     for (int i = 0; i < size; i++) {
                         TextSliderView textSliderView = new TextSliderView(getActivity());
@@ -266,7 +277,15 @@ public class DetailFragment extends Fragment {
                         //add your extra information
                         mDemoSlider.addSlider(textSliderView);
                     }
+                } else {
+                    content = new ShareLinkContent.Builder()
+                            .setContentUrl(Uri.parse(url + placesID))
+                            .setContentTitle(apiPlaces.getPlaces_name())
+                            .setContentDescription(apiPlaces.getPlaces_desc())
+                            .build();
                 }
+                ShareButton shareButton = (ShareButton) view.findViewById(R.id.fb_share);
+                shareButton.setShareContent(content);
             }
         }
     }
