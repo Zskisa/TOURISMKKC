@@ -102,18 +102,7 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == btnOk) {
-<<<<<<< HEAD
-            /*
-            * เตรียมข้อมูล ApiReview เพื่อใช้ในการรีวิว
-            * */
-            ApiReview apiReview = new ApiReview();
-            if (path != "" && mime != "") {
-                apiReview.setFiles(path);
-                apiReview.setMime(mime);
-            }
-=======
             //เตรียมข้อมูล ApiReview
->>>>>>> origin/master
             apiReview.setPlaces_id(places_id);
             apiReview.setRate_value(String.valueOf(ratingBar.getRating()));
             apiReview.setReview_detail(txtReview.getText().toString());
