@@ -33,12 +33,13 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
 
     public String places_id = "";
     protected static final int GALLERY_PICTURE = 1;
-    private String path = "";
-    private String mime = "";
+    private ApiReview apiReview;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_detail, container, false);
+        //เตรียม ApiReview
+        apiReview = new ApiReview();
 
         /*
         * เชื่อมปุ่มต่างๆ
@@ -59,13 +60,12 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getActivity(), "In", Toast.LENGTH_LONG).show();
         if (requestCode == GALLERY_PICTURE && resultCode == -1 && data != null && data.getData() != null) {
             Uri uri = data.getData();
             try {
-                path = getRealPathFromURI_API19(getActivity(), uri);
-                imageView.setImageURI(Uri.parse(new File(path).toString()));
-                mime = getActivity().getContentResolver().getType(uri);
+                apiReview.setFiles(getRealPathFromURI_API19(getActivity(), uri));
+                imageView.setImageURI(Uri.parse(new File(apiReview.getFiles()).toString()));
+                apiReview.setMime(getActivity().getContentResolver().getType(uri));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -102,6 +102,7 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == btnOk) {
+<<<<<<< HEAD
             /*
             * เตรียมข้อมูล ApiReview เพื่อใช้ในการรีวิว
             * */
@@ -110,6 +111,9 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
                 apiReview.setFiles(path);
                 apiReview.setMime(mime);
             }
+=======
+            //เตรียมข้อมูล ApiReview
+>>>>>>> origin/master
             apiReview.setPlaces_id(places_id);
             apiReview.setRate_value(String.valueOf(ratingBar.getRating()));
             apiReview.setReview_detail(txtReview.getText().toString());
