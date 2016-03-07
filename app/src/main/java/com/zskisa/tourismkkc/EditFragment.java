@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 public class EditFragment extends Fragment {
 
-    private View view;
     private CheckBox chk01, chk02, chk03, chk04, chk05, chk06, chk07, chk08, chk09, chk10, chk11, chk12,
             chk13, chk14, chk15, chk16, chk17, chk18, chk19, chk20, chk21, chk22, chk23, chk24;
     private Button button;
@@ -27,7 +26,7 @@ public class EditFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit, container, false);
 
         //ซ่อน FloatingButton
         if (MainActivity.floatingActionButton.isShown()) {

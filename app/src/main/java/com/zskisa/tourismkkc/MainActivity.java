@@ -430,8 +430,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
-//        Toast.makeText(getApplicationContext(), "Latitude : " + location.getLatitude() + "\n"
-//                + "Longitude : " + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
     class Connect extends AsyncTask<ApiFeedNearRequest, Void, ApiFeed> {
