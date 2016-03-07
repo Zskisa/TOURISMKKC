@@ -40,7 +40,9 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_detail, container, false);
 
-        //เชื่อมปุ่มต่างๆ
+        /*
+        * เชื่อมปุ่มต่างๆ
+        * */
         ratingBar = (RatingBar) view.findViewById(R.id.ddRatingBar);
         txtReview = (EditText) view.findViewById(R.id.ddTxtReview);
         imageView = (ImageView) view.findViewById(R.id.ddImage);
@@ -73,13 +75,16 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     private String getRealPathFromURI_API19(Context context, Uri uri) {
         String filePath = "";
         String wholeID = DocumentsContract.getDocumentId(uri);
-
-        // Split at colon, use second item in the array
+        /*
+        * Split at colon, use second item in the array
+        * */
         String id = wholeID.split(":")[1];
 
         String[] column = {MediaStore.Images.Media.DATA};
 
-        // where id is equal to
+        /*
+        * where id is equal to
+        * */
         String sel = MediaStore.Images.Media._ID + "=?";
 
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -97,7 +102,9 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == btnOk) {
-            //เตรียมข้อมูล ApiReview เพื่อใช้ในการรีวิว
+            /*
+            * เตรียมข้อมูล ApiReview เพื่อใช้ในการรีวิว
+            * */
             ApiReview apiReview = new ApiReview();
             if (path != "" && mime != "") {
                 apiReview.setFiles(path);
@@ -107,8 +114,9 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
             apiReview.setRate_value(String.valueOf(ratingBar.getRating()));
             apiReview.setReview_detail(txtReview.getText().toString());
             apiReview.setApiLogin(MainActivity.login);
-
-            //ส่งค่าให้ฝั่งเซิร์ฟเวอร์
+            /*
+            * ส่งค่าให้ฝั่งเซิร์ฟเวอร์
+            * */
             DetailDialog.Connect connect = new Connect();
             connect.execute(apiReview);
         } else if (v == btnCancel) {
@@ -128,7 +136,7 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-             /*
+            /*
             * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
             */
             progressDialog = new ProgressDialog(getActivity(),

@@ -1,22 +1,43 @@
 package com.zskisa.tourismkkc;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
 import com.zskisa.tourismkkc.apimodel.ReviewAdapter;
@@ -25,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetailFragment extends Fragment {
-    private View view;
     private String placesID;
     private SliderLayout mDemoSlider;
     private TextView txtName, txtDetail;
@@ -37,9 +57,14 @@ public class DetailFragment extends Fragment {
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     int num_review = 1;
     int review_plus = 5;
+    private CallbackManager callbackManager;
+    private View view;
+    GoogleMap googleMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getActivity());
+        callbackManager = CallbackManager.Factory.create();
         view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         txtName = (TextView) view.findViewById(R.id.text_places_name);
@@ -70,9 +95,11 @@ public class DetailFragment extends Fragment {
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-//                            Toast.makeText(getActivity(), "Load more review", Toast.LENGTH_SHORT).show();
-                            //โหลดรีวิวสถานที่
-                            //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+                            /*
+                            * Toast.makeText(getActivity(), "Load more review", Toast.LENGTH_SHORT).show();
+                            * โหลดรีวิวสถานที่
+                            * execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+                            * */
                             DetailFragment.ConnectReview connectReview = new ConnectReview();
                             connectReview.execute(placesID, String.valueOf(num_review), String.valueOf(num_review + review_plus));
                             num_review = num_review + review_plus;
@@ -82,28 +109,63 @@ public class DetailFragment extends Fragment {
             }
         });
 
+        MapView mMapView = (MapView) view.findViewById(R.id.map);
+        if (mMapView != null) {
+            mMapView.onCreate(savedInstanceState);
+
+            mMapView.onResume();// needed to get the map to display immediately
+
+//        try {
+//            MapsInitializer.initialize(getActivity().getApplicationContext());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+            googleMap = mMapView.getMap();
+            // latitude and longitude
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return view;
+            }
+            googleMap.setMyLocationEnabled(true);
+        }
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        //ใช้ตรวจสอบค่าและรับค่าทุกครั้งที่มีการเรียกหน้านี้
+        /*
+        * ใช้ตรวจสอบค่าและรับค่าทุกครั้งที่มีการเรียกหน้านี้
+        * */
         Bundle bundle = getArguments();
         if (bundle != null) {
             placesID = bundle.getString("placesID");
-//            Toast.makeText(getActivity(), placesID, Toast.LENGTH_SHORT).show();
-            //โหลดข้อมูลสถานที่
+            /*
+            * Toast.makeText(getActivity(), placesID, Toast.LENGTH_SHORT).show();
+            * โหลดข้อมูลสถานที่
+            * */
             DetailFragment.Connect connect = new Connect();
             connect.execute(placesID);
-            //โหลดรีวิวสถานที่
-            //execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+            /*
+            * โหลดรีวิวสถานที่
+            * execute(รหัสสถานที่,รีวิวเริ่มต้น,รีวิวสุดท้าย);
+            * */
             DetailFragment.ConnectReview connectReview = new ConnectReview();
             connectReview.execute(placesID, String.valueOf(num_review), String.valueOf(num_review + review_plus));
             num_review = num_review + review_plus;
         }
 
-        //แก้ไขปุ่ม FloatingActionButton ให้เป็นการทำงานเฉพาะหน้านั้น
+        /*
+        * แก้ไขปุ่ม FloatingActionButton ให้เป็นการทำงานเฉพาะหน้านั้น
+        * */
         MainActivity.floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_action_review));
         MainActivity.floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.com_facebook_blue)));
         MainActivity.floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -116,22 +178,47 @@ public class DetailFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(getActivity());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(getActivity());
+    }
+
     class Connect extends AsyncTask<String, Void, ApiPlaces> {
         ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-             /*
+
+            /*
             * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
-            */
+            * */
             progressDialog = new ProgressDialog(getActivity(),
                     R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage("Loading...");
             progressDialog.show();
 
-            //ล้างค่า Slide เก่าออกกรณีโหลดใหม่
+            /*
+            * ล้างค่า Slide เก่าออกกรณีโหลดใหม่
+            * */
             mDemoSlider.removeAllSliders();
         }
 
@@ -149,6 +236,23 @@ public class DetailFragment extends Fragment {
             } else {
                 txtName.setText(apiPlaces.getPlaces_name());
                 txtDetail.setText(apiPlaces.getPlaces_desc());
+
+                //Point map and zoom
+                // create marker
+                MarkerOptions marker = new MarkerOptions().position(
+                        new LatLng(Double.parseDouble(apiPlaces.getLocation_lat()), Double.parseDouble(apiPlaces.getLocation_lng())))
+                        .title(apiPlaces.getPlaces_name());
+
+                // Changing marker icon
+                marker.icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                // adding marker
+                googleMap.addMarker(marker);
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(Double.parseDouble(apiPlaces.getLocation_lat()), Double.parseDouble(apiPlaces.getLocation_lng()))).zoom(12).build();
+                googleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
 
                 if (apiPlaces.getPhotos() != null && apiPlaces.getPhotos().size() > 0) {
                     int size = apiPlaces.getPhotos().size();
@@ -193,7 +297,9 @@ public class DetailFragment extends Fragment {
                         adapter = new ReviewAdapter(reviews);
                         rcvReview.setAdapter(adapter);
                     } else {
-                        //สั่งให้ adapter อัพเดทข้อมูล
+                        /*
+                        * สั่งให้ adapter อัพเดทข้อมูล
+                        * */
                         adapter.notifyDataSetChanged();
                     }
                 }
