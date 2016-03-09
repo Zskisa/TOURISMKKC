@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity
             mFragmentManager = getFragmentManager();
             changePage(new FeedFragment());
         } else {
-            Toast.makeText(getApplication(), "ผิดพลาด กรุณาเข้าระบบใหม่", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication(), "กรุณาเข้าระบบ", Toast.LENGTH_LONG).show();
         }
     }
 

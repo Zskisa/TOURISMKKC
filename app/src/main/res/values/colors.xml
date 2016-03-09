@@ -4,9 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="primary">#ff6f00</color>
+    <!-- สีด้านหลัง -->
+    <color name="primary">#40C4FF</color>
+    <!-- สีปุ่ม -->
+    <color name="primary_darker">#1DE9B6</color>
+
     <color name="primary_dark">#64dd17</color>
-    <color name="primary_darker">#ffff00</color>
     <color name="second">#66cd66</color>
     <color name="second_dark">#61c261</color>
     <color name="second_darker">#5cb85c</color>

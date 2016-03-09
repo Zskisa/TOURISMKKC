@@ -28,6 +28,7 @@
             android:layout_marginTop="8dp">
 
             <EditText
+                android:textColor="@color/black"
                 android:id="@+id/input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

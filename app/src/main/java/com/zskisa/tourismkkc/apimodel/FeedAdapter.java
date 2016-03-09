@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +68,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         * */
         holder.placesName.setText(places.get(position).getPlaces_name());
         holder.typeName.setText(places.get(position).getType_detail_name());
+        holder.placesRate.setRating(Float.parseFloat(places.get(position).getAvgstar()));
         Context context = holder.placesPhoto.getContext();
         if (!places.get(position).getPhoto_link().isEmpty()) {
             Picasso.with(context).load(places.get(position).getPhoto_link()).fit().centerCrop().into(holder.placesPhoto);
@@ -82,7 +85,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         CardView cv;
         TextView placesName;
         TextView typeName;
-        TextView placesRate;
+        RatingBar placesRate;
         ImageView placesPhoto;
 
         FeedViewHolder(View itemView) {
@@ -90,7 +93,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             cv = (CardView) itemView.findViewById(R.id.cv);
             placesName = (TextView) itemView.findViewById(R.id.rcv_places_name);
             typeName = (TextView) itemView.findViewById(R.id.rcv_type_name);
-            placesRate = (TextView) itemView.findViewById(R.id.rcv_places_rate);
+            placesRate = (RatingBar) itemView.findViewById(R.id.ratingBar_feed);
             placesPhoto = (ImageView) itemView.findViewById(R.id.rcv_places_photo);
         }
     }
