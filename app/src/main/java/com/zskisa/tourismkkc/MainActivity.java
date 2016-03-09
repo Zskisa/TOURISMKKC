@@ -355,11 +355,11 @@ public class MainActivity extends AppCompatActivity
         mGoogleMap.animateCamera(cameraUpdate);
 
         //วาดเส้นรัศมี
-        Circle circle = mGoogleMap.addCircle(new CircleOptions()
+        mGoogleMap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(Double.parseDouble(apiFeedNearRequest.getDistance()))
-                .strokeColor(Color.BLUE)
-                .fillColor(Color.rgb(200, 230, 255)));
+                .strokeColor(Color.RED)
+                .fillColor(Color.argb(75, 200, 230, 255)));
     }
 
     @Override

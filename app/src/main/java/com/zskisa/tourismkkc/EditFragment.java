@@ -219,7 +219,11 @@ public class EditFragment extends Fragment {
             if (apiProfile.getStatus().equalsIgnoreCase("success")) {
                 Toast.makeText(getActivity(), "โหลดสำเร็จ", Toast.LENGTH_LONG).show();
                 for (int i = 0; i < apiProfile.getData().getResult().size(); i++) {
+
+
                     String id = apiProfile.getData().getResult().get(i).getType_detail_id();
+
+
                     if (id.equalsIgnoreCase("01")) {
                         chk01.setChecked(true);
                     }

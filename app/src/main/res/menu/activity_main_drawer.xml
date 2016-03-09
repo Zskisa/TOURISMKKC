@@ -16,15 +16,15 @@
             android:title="@string/map" />
         <item
             android:id="@+id/menu_edit"
-            android:icon="@drawable/ic_account_box"
+            android:icon="@drawable/ic_settings"
             android:title="@string/edit" />
         <item
             android:id="@+id/menu_about"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_face"
             android:title="@string/about" />
         <item
             android:id="@+id/menu_logout"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_power_settings_new"
             android:title="@string/logout" />
     </group>
 
