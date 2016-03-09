@@ -28,7 +28,9 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
 
-        //ซ่อน FloatingButton
+        /*
+        * ซ่อน FloatingButton
+        * */
         if (MainActivity.floatingActionButton.isShown()) {
             MainActivity.floatingActionButton.hide();
         }
@@ -39,13 +41,15 @@ public class EditFragment extends Fragment {
         EditFragment.Profile profile = new Profile();
         profile.execute(apiProfileRequest);
 
-        //เชื่อมปุ่มต่างๆ
+        /*
+        * เชื่อมปุ่มต่างๆ
+        * */
         initial(view);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                id = new ArrayList<String>();
+                id = new ArrayList<>();
                 if (chk01.isChecked()) {
                     id.add("01");
                 }

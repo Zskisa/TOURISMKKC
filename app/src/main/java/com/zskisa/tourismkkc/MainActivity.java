@@ -359,7 +359,7 @@ public class MainActivity extends AppCompatActivity
                 .center(latLng)
                 .radius(Double.parseDouble(apiFeedNearRequest.getDistance()))
                 .strokeColor(Color.BLUE)
-                .fillColor(Color.rgb(200,230,255)));
+                .fillColor(Color.rgb(200, 230, 255)));
     }
 
     @Override

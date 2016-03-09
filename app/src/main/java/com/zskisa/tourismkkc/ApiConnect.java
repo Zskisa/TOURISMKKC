@@ -35,7 +35,6 @@ public class ApiConnect {
     private OkHttpClient okHttpClient = new OkHttpClient();
 
     public ApiConnect() {
-
     }
 
     public ApiStatus register(ApiRegister dataRegister) {

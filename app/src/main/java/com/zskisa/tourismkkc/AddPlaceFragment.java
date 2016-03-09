@@ -33,56 +33,48 @@ import java.util.List;
 public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     protected static final int GALLERY_PICTURE = 1;
-    EditText editTextName, editTextDetail;
-    ImageView imgView;
-    Button btnAdd;
-    private Spinner spinner;
-    private View view;
-    private String path = "";
-    private String mime = "";
-    private String gpsMapLat = "";
-    private String gpsMapLong = "";
+    private EditText editTextName, editTextDetail;
+    private ImageView imgView;
     private String TID = "";
-    List<String> typeId;
-    List<String> typeDetial;
+    private List<String> typeId;
+    private ApiRegisterPlaces registerPlaces;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_place, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_place, container, false);
 
-        //ซ่อน FloatingButton
+        /*
+        * ซ่อน FloatingButton
+        * */
         if (MainActivity.floatingActionButton.isShown()) {
             MainActivity.floatingActionButton.hide();
         }
 
-        // EditText element
+        /*
+        * ดึงค่าตำแหน่งจากหน้า MainActivity
+        * */
+        registerPlaces = new ApiRegisterPlaces();
+        String gpsMapLat = String.valueOf(MainActivity.location.getLatitude());
+        String gpsMapLong = String.valueOf(MainActivity.location.getLongitude());
+        registerPlaces.setLocation_lat(gpsMapLat);
+        registerPlaces.setLocation_lng(gpsMapLong);
+
         editTextName = (EditText) view.findViewById(R.id.edt_place_name);
         editTextDetail = (EditText) view.findViewById(R.id.edt_place_detail);
         imgView = (ImageView) view.findViewById(R.id.fap_img);
-        btnAdd = (Button) view.findViewById(R.id.fap_btnAdd);
+        Button btnAdd = (Button) view.findViewById(R.id.fap_btnAdd);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String sName = editTextName.getText().toString();
                 String sDetail = editTextDetail.getText().toString();
-                if (!sName.isEmpty() && !path.isEmpty()) {
+                if (!sName.isEmpty() && !registerPlaces.getFiles().isEmpty()) {
                     try {
-                        Toast.makeText(getActivity(), "Name: " + sName + "\nDetail: " + sDetail, Toast.LENGTH_LONG).show();
-
-                        //ดึงค่าตำแหน่งจากหน้า MainActivity
-                        gpsMapLat = String.valueOf(MainActivity.location.getLatitude());
-                        gpsMapLong = String.valueOf(MainActivity.location.getLongitude());
-
-                        ApiRegisterPlaces registerPlaces = new ApiRegisterPlaces();
                         registerPlaces.setApiLogin(MainActivity.login);
                         registerPlaces.setPlaces_name(sName);
                         registerPlaces.setPlaces_desc(sDetail);
                         registerPlaces.setType_detail_id(TID);
-                        registerPlaces.setLocation_lat(gpsMapLat);
-                        registerPlaces.setLocation_lng(gpsMapLong);
-                        registerPlaces.setFiles(path);
-                        registerPlaces.setMime(mime);
 
                         AddPlaceFragment.Connect connect = new Connect();
                         connect.execute(registerPlaces);
@@ -97,70 +89,66 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
         });
 
         // Spinner element
-        spinner = (Spinner) view.findViewById(R.id.spinner);
-
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
         // Spinner click listener
         spinner.setOnItemSelectedListener(this);
-
         // Spinner Drop down elements
         typeId = new ArrayList<>();
-        typeDetial = new ArrayList<>();
+        List<String> typeDetail = new ArrayList<>();
 
         typeId.add("01");
-        typeDetial.add("สถานที่ท่องเที่ยวเชิงธรรมชาติ");
+        typeDetail.add("สถานที่ท่องเที่ยวเชิงธรรมชาติ");
         typeId.add("02");
-        typeDetial.add("สถานที่ท่องเที่ยวเชิงวัฒนธรรม");
+        typeDetail.add("สถานที่ท่องเที่ยวเชิงวัฒนธรรม");
         typeId.add("03");
-        typeDetial.add("สถานที่ท่องเที่ยวเชิงประวัติศาสตร์");
+        typeDetail.add("สถานที่ท่องเที่ยวเชิงประวัติศาสตร์");
         typeId.add("04");
-        typeDetial.add("สถานที่ท่องเที่ยวเชิงเกษตร");
+        typeDetail.add("สถานที่ท่องเที่ยวเชิงเกษตร");
         typeId.add("05");
-        typeDetial.add("สถานที่ท่องเที่ยวเชิงนันทนาการ");
+        typeDetail.add("สถานที่ท่องเที่ยวเชิงนันทนาการ");
         typeId.add("06");
-        typeDetial.add("อาหารไทย");
+        typeDetail.add("อาหารไทย");
         typeId.add("07");
-        typeDetial.add("อาหารภาคอีสาน");
+        typeDetail.add("อาหารภาคอีสาน");
         typeId.add("08");
-        typeDetial.add("อาหารภาคใต้");
+        typeDetail.add("อาหารภาคใต้");
         typeId.add("09");
-        typeDetial.add("อาหารภาคเหนือ");
+        typeDetail.add("อาหารภาคเหนือ");
         typeId.add("10");
-        typeDetial.add("อาหารซีฟู๊ด");
+        typeDetail.add("อาหารซีฟู๊ด");
         typeId.add("11");
-        typeDetial.add("อาหารฟาสฟู๊ด");
+        typeDetail.add("อาหารฟาสฟู๊ด");
         typeId.add("12");
-        typeDetial.add("อาหารต่างชาติ");
+        typeDetail.add("อาหารต่างชาติ");
         typeId.add("13");
-        typeDetial.add("ราคาต่ำกว่า 500 บาท");
+        typeDetail.add("ราคาต่ำกว่า 500 บาท");
         typeId.add("14");
-        typeDetial.add("ราคา 501 – 1000 บาท");
+        typeDetail.add("ราคา 501 – 1000 บาท");
         typeId.add("15");
-        typeDetial.add("ราคา 1001 – 2000 บาท");
+        typeDetail.add("ราคา 1001 – 2000 บาท");
         typeId.add("16");
-        typeDetial.add("ราคามากกว่า 2000 บาท");
+        typeDetail.add("ราคามากกว่า 2000 บาท");
         typeId.add("17");
-        typeDetial.add("ห้างสรรพสินค้า");
+        typeDetail.add("ห้างสรรพสินค้า");
         typeId.add("18");
-        typeDetial.add("ซุปเปอร์เซ็นเตอร์");
+        typeDetail.add("ซุปเปอร์เซ็นเตอร์");
         typeId.add("19");
-        typeDetial.add("ซุปเปอร์มาร์เก็ต");
+        typeDetail.add("ซุปเปอร์มาร์เก็ต");
         typeId.add("20");
-        typeDetial.add("ร้านสะดวกซื้อ");
+        typeDetail.add("ร้านสะดวกซื้อ");
         typeId.add("21");
-        typeDetial.add("ร้านค้าปลีก");
+        typeDetail.add("ร้านค้าปลีก");
         typeId.add("22");
-        typeDetial.add("สถานบริการอาบ อบ นวด");
+        typeDetail.add("สถานบริการอาบ อบ นวด");
         typeId.add("23");
-        typeDetial.add("สถานบันเทิงดิสโก้เธค ผับ บาร์");
+        typeDetail.add("สถานบันเทิงดิสโก้เธค ผับ บาร์");
         typeId.add("24");
-        typeDetial.add("สถานบันเทิงร้านคาราโอเกะ");
+        typeDetail.add("สถานบันเทิงร้านคาราโอเกะ");
 
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, typeDetial);
-
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, typeDetail);
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
 
@@ -182,13 +170,14 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getActivity(), "In", Toast.LENGTH_LONG).show();
         if (requestCode == GALLERY_PICTURE && resultCode == -1 && data != null && data.getData() != null) {
             Uri uri = data.getData();
             try {
-                path = getRealPathFromURI_API19(getActivity(), uri);
+                String path = getRealPathFromURI_API19(getActivity(), uri);
                 imgView.setImageURI(Uri.parse(new File(path).toString()));
-                mime = getActivity().getContentResolver().getType(uri);
+                String mime = getActivity().getContentResolver().getType(uri);
+                registerPlaces.setFiles(path);
+                registerPlaces.setMime(mime);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -201,17 +190,11 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
 
         // Split at colon, use second item in the array
         String id = wholeID.split(":")[1];
-
         String[] column = {MediaStore.Images.Media.DATA};
-
         // where id is equal to
         String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{id}, null);
-
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, column, sel, new String[]{id}, null);
         int columnIndex = cursor.getColumnIndex(column[0]);
-
         if (cursor.moveToFirst()) {
             filePath = cursor.getString(columnIndex);
         }
@@ -221,11 +204,7 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // On selecting a spinner item
-        String item = parent.getItemAtPosition(position).toString();
         TID = typeId.get(position);
-        // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item + " ID" + TID, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -242,8 +221,7 @@ public class AddPlaceFragment extends Fragment implements AdapterView.OnItemSele
             /*
             * สร้าง dialog popup ขึ้นมาแสดงตอนกำลัง login เข้าระบบเป็นเวลา 3 วินาที
             */
-            progressDialog = new ProgressDialog(getActivity(),
-                    R.style.AppTheme_Dark_Dialog);
+            progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage("Uploading...");
             progressDialog.show();

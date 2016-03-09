@@ -54,12 +54,14 @@
             android:layout_width="160dp"
             android:layout_height="120dp"
             android:contentDescription=""
-            android:src="@android:drawable/alert_dark_frame" />
+            android:src="@mipmap/ic_test" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_place_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
             android:text="Select" />
 
     </LinearLayout>
@@ -71,8 +73,9 @@
     </com.google.android.gms.maps.MapView>
 
     <Button
+        android:id="@+id/fap_btnAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/fap_btnAdd" />
+        android:layout_marginTop="15dp"
+        android:text="Add" />
 </LinearLayout>

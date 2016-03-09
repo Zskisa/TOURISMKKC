@@ -38,9 +38,10 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_detail, container, false);
-        //เตรียม ApiReview
+        /*
+        * เตรียม ApiReview
+        * */
         apiReview = new ApiReview();
-
         /*
         * เชื่อมปุ่มต่างๆ
         * */
@@ -79,9 +80,7 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
         * Split at colon, use second item in the array
         * */
         String id = wholeID.split(":")[1];
-
         String[] column = {MediaStore.Images.Media.DATA};
-
         /*
         * where id is equal to
         * */
@@ -102,7 +101,9 @@ public class DetailDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == btnOk) {
-            //เตรียมข้อมูล ApiReview
+            /*
+            * เตรียมข้อมูล ApiReview
+            * */
             apiReview.setPlaces_id(places_id);
             apiReview.setRate_value(String.valueOf(ratingBar.getRating()));
             apiReview.setReview_detail(txtReview.getText().toString());

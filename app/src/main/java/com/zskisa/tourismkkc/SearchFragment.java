@@ -27,24 +27,22 @@ public class SearchFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView rv;
     private LinearLayoutManager llm;
-    private int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
     private boolean loading = true;
     private FeedAdapter adapter;
     private List<ApiFeed.DataEntity.ResultEntity> feeds;
-    private Button btnSearch;
     private EditText txtSearch;
-    View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         //ตั้งค่าเริ่มต้น apiFeedRequest และดึงค่า login จาก MainActivity
         apiFeedRequest = new ApiFeedRequest();
         apiFeedRequest.setApiLogin(MainActivity.login);
 
-        btnSearch = (Button) view.findViewById(R.id.fsBtnSearch);
+        Button btnSearch = (Button) view.findViewById(R.id.fsBtnSearch);
         txtSearch = (EditText) view.findViewById(R.id.fs_txt);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -76,10 +74,10 @@ public class SearchFragment extends Fragment {
                 {
                     visibleItemCount = llm.getChildCount();
                     totalItemCount = llm.getItemCount();
-                    pastVisiblesItems = llm.findFirstVisibleItemPosition();
+                    pastVisibleItems = llm.findFirstVisibleItemPosition();
 
                     if (loading) {
-                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                             loading = false;
                             Toast.makeText(getActivity(), "Load more", Toast.LENGTH_SHORT).show();
                             //โหลดรีวิวสถานที่

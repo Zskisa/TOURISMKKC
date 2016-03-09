@@ -16,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +29,11 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Picasso;
 import com.zskisa.tourismkkc.apimodel.ApiFeedReview;
 import com.zskisa.tourismkkc.apimodel.ApiPlaces;
 import com.zskisa.tourismkkc.apimodel.ReviewAdapter;
@@ -54,12 +50,12 @@ public class DetailFragment extends Fragment {
     private ReviewAdapter adapter;
     private List<ApiFeedReview.DataEntity.ResultEntity> reviews;
     private boolean loading = true;
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
-    int num_review = 1;
-    int review_plus = 5;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
+    private int num_review = 1;
+    private int review_plus = 5;
     private CallbackManager callbackManager;
     private View view;
-    GoogleMap googleMap;
+    private GoogleMap googleMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,10 +86,10 @@ public class DetailFragment extends Fragment {
                 {
                     visibleItemCount = llm.getChildCount();
                     totalItemCount = llm.getItemCount();
-                    pastVisiblesItems = llm.findFirstVisibleItemPosition();
+                    pastVisibleItems = llm.findFirstVisibleItemPosition();
 
                     if (loading) {
-                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                             loading = false;
                             /*
                             * Toast.makeText(getActivity(), "Load more review", Toast.LENGTH_SHORT).show();
@@ -113,13 +109,7 @@ public class DetailFragment extends Fragment {
         if (mMapView != null) {
             mMapView.onCreate(savedInstanceState);
 
-            mMapView.onResume();// needed to get the map to display immediately
-
-//        try {
-//            MapsInitializer.initialize(getActivity().getApplicationContext());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+            mMapView.onResume(); // needed to get the map to display immediately
 
             googleMap = mMapView.getMap();
             // latitude and longitude
@@ -210,8 +200,7 @@ public class DetailFragment extends Fragment {
             /*
             * สร้าง dialog popup ขึ้นมาแสดงว่ากำลังทำงานอยู่่
             * */
-            progressDialog = new ProgressDialog(getActivity(),
-                    R.style.AppTheme_Dark_Dialog);
+            progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage("Loading...");
             progressDialog.show();
